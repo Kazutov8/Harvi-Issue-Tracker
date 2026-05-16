@@ -39,6 +39,37 @@ public sealed class SuggestIssueTriageTests
         Assert.Equal("AI suggested an unknown label: 'feature'.", result.ValidationError);
     }
 
+    [Fact]
+    public async Task ExecuteAsync_ReturnsValidResult_WhenProjectHasNoLabelsAndAiReturnsEmptyLabels()
+    {
+        var issue = Issue.Create(Guid.NewGuid(), "Broken login", null, Guid.NewGuid());
+        var useCase = new SuggestIssueTriage(
+            new StubIssueRepository(issue),
+            new StubLabelRepository([]),
+            new StubTriageAgent(new TriageAgentResponse("medium", [], "Draft")));
+
+        var result = await useCase.ExecuteAsync(issue.Id);
+
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Labels);
+        Assert.Equal("Draft", result.AcceptanceCriteria);
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_ReturnsInvalidResult_WhenProjectHasNoLabelsAndAiReturnsPlaceholderLabel()
+    {
+        var issue = Issue.Create(Guid.NewGuid(), "Broken login", null, Guid.NewGuid());
+        var useCase = new SuggestIssueTriage(
+            new StubIssueRepository(issue),
+            new StubLabelRepository([]),
+            new StubTriageAgent(new TriageAgentResponse("medium", ["none"], "Draft")));
+
+        var result = await useCase.ExecuteAsync(issue.Id);
+
+        Assert.False(result.IsValid);
+        Assert.Equal("AI suggested an unknown label: 'none'.", result.ValidationError);
+    }
+
     private sealed class StubIssueRepository(Issue issue) : IIssueRepository
     {
         public Task AddAsync(Issue issue, CancellationToken cancellationToken = default) => Task.CompletedTask;

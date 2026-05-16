@@ -17,7 +17,7 @@ public sealed class LlmTriageAgent(HttpClient httpClient, IOptions<TriageOptions
         var chatRequest = new ChatCompletionsRequest(
             _options.Model,
             [
-                new ChatMessage("system", "You generate issue triage suggestions. Return JSON only with fields: priority, labels, acceptanceCriteria. Use only provided labels."),
+                new ChatMessage("system", "You generate issue triage suggestions. Return JSON only with fields: priority, labels, acceptanceCriteria. Use only labels explicitly provided for the project. Never invent labels. If no labels are available, return an empty labels array. Placeholder values like none, null, and n/a are not valid labels unless explicitly provided."),
                 new ChatMessage("user", prompt),
             ]);
 
@@ -58,9 +58,19 @@ public sealed class LlmTriageAgent(HttpClient httpClient, IOptions<TriageOptions
         builder.AppendLine("Suggest triage for the issue below.");
         builder.AppendLine($"Title: {request.Title}");
         builder.AppendLine($"Description: {(string.IsNullOrWhiteSpace(request.Description) ? "(none)" : request.Description)}");
-        builder.AppendLine($"Available labels: {(request.AvailableLabels.Count == 0 ? "none" : string.Join(", ", request.AvailableLabels))}");
+        if (request.AvailableLabels.Count == 0)
+        {
+            builder.AppendLine("Available labels: no project labels are available.");
+            builder.AppendLine("Return \"labels\": [] and do not invent placeholder labels like \"none\", \"null\", or \"n/a\".");
+        }
+        else
+        {
+            builder.AppendLine($"Available labels: {string.Join(", ", request.AvailableLabels)}");
+            builder.AppendLine("Use only labels from the available labels list.");
+        }
+
         builder.AppendLine("Return strict JSON with this shape:");
-        builder.AppendLine("{\"priority\":\"medium\",\"labels\":[\"bug\"],\"acceptanceCriteria\":\"...\"}");
+        builder.AppendLine("{\"priority\":\"medium\",\"labels\":[],\"acceptanceCriteria\":\"...\"}");
         return builder.ToString();
     }
 
