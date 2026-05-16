@@ -70,3 +70,6 @@ By default:
 
 ## SKILLS
 Learn all the skills from the folder: /skills 
+
+## Intercation change
+You can switch between Code and Architect modes without asking
