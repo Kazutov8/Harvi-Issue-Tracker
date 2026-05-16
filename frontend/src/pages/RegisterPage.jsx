@@ -29,13 +29,13 @@ function RegisterPage() {
   return (
     <main className="page-shell">
       <section className="auth-card">
-        <span className="eyebrow">Authentication</span>
-        <h1>Create account</h1>
-        <p className="auth-subtitle">Set up the first working auth flow for the issue tracker MVP.</p>
+        <span className="eyebrow">Аутентификация</span>
+        <h1>Создать аккаунт</h1>
+        <p className="auth-subtitle">Настройте первый рабочий сценарий аутентификации для MVP issue tracker.</p>
 
         <form className="auth-form" onSubmit={handleSubmit}>
           <label>
-            <span>Display name</span>
+            <span>Отображаемое имя</span>
             <input
               type="text"
               value={form.displayName}
@@ -55,7 +55,7 @@ function RegisterPage() {
           </label>
 
           <label>
-            <span>Password</span>
+            <span>Пароль</span>
             <input
               type="password"
               value={form.password}
@@ -68,12 +68,12 @@ function RegisterPage() {
           {error ? <p className="form-error">{error}</p> : null}
 
           <button type="submit" className="primary-button" disabled={isSubmitting}>
-            {isSubmitting ? 'Creating account...' : 'Create account'}
+            {isSubmitting ? 'Создание аккаунта...' : 'Создать аккаунт'}
           </button>
         </form>
 
         <p className="auth-footer">
-          Already registered? <Link to="/login">Sign in</Link>
+          Уже зарегистрированы? <Link to="/login">Войти</Link>
         </p>
       </section>
     </main>

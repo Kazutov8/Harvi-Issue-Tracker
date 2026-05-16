@@ -8,7 +8,7 @@ function ProtectedRoute({ children }) {
     return (
       <main className="page-shell">
         <section className="auth-card">
-          <p className="auth-subtitle">Checking session...</p>
+          <p className="auth-subtitle">Проверка сессии...</p>
         </section>
       </main>
     )

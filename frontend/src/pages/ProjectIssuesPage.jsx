@@ -4,7 +4,7 @@ import { useAuth } from '../auth/AuthContext'
 import { issuesApi } from '../issues/issuesApi'
 
 const STATUS_OPTIONS = [
-  { value: '', label: 'All open statuses' },
+  { value: '', label: 'Все открытые статусы' },
   { value: 'backlog', label: 'backlog' },
   { value: 'todo', label: 'todo' },
   { value: 'in-progress', label: 'in-progress' },
@@ -104,31 +104,31 @@ function ProjectIssuesPage() {
       <section className="projects-layout">
         <header className="projects-header">
           <div>
-            <span className="eyebrow">Issues</span>
+            <span className="eyebrow">Задачи</span>
             <h1>{projectSlug}</h1>
-            <p className="auth-subtitle">Create issues quickly and prepare them for triage.</p>
+            <p className="auth-subtitle">Быстро создавайте задачи и подготавливайте их к triage.</p>
           </div>
 
           <Link to="/projects" className="secondary-button nav-link-button">
-            Back to projects
+            Назад к проектам
           </Link>
         </header>
 
         <section className="projects-grid">
           <section className="projects-panel">
-            <h2>New issue</h2>
+            <h2>Новая задача</h2>
             <form className="auth-form" onSubmit={handleSubmit}>
               <label>
-                <span>Title</span>
+                <span>Заголовок</span>
                 <input value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Login form breaks on Safari" required />
               </label>
 
               <label>
-                <span>Description</span>
+                <span>Описание</span>
                 <textarea
                   value={description}
                   onChange={(event) => setDescription(event.target.value)}
-                  placeholder="Optional context for the issue"
+                  placeholder="Необязательный контекст для задачи"
                   rows={5}
                 />
               </label>
@@ -136,31 +136,31 @@ function ProjectIssuesPage() {
               {error ? <p className="form-error">{error}</p> : null}
 
               <button type="submit" className="primary-button" disabled={isSubmitting}>
-                {isSubmitting ? 'Creating issue...' : 'Create issue'}
+                {isSubmitting ? 'Создание задачи...' : 'Создать задачу'}
               </button>
             </form>
           </section>
 
           <section className="projects-panel">
             <div className="projects-list-header">
-              <h2>Project issues</h2>
+              <h2>Задачи проекта</h2>
               <span className="projects-count">{issues.length}</span>
             </div>
 
             <section className="issue-section">
-              <h3>Filters</h3>
+              <h3>Фильтры</h3>
               <div className="triage-actions-grid">
                 <label>
-                  <span>Search</span>
+                  <span>Поиск</span>
                   <input
                     value={filters.query}
                     onChange={(event) => handleFilterChange('query', event.target.value)}
-                    placeholder="Search title or description"
+                    placeholder="Искать по заголовку или описанию"
                   />
                 </label>
 
                 <label>
-                  <span>Status</span>
+                  <span>Статус</span>
                   <select value={filters.status} onChange={(event) => handleFilterChange('status', event.target.value)}>
                     {STATUS_OPTIONS.map((option) => (
                       <option key={option.value || 'all'} value={option.value}>
@@ -171,12 +171,12 @@ function ProjectIssuesPage() {
                 </label>
 
                 <label>
-                  <span>Assignee</span>
+                  <span>Исполнитель</span>
                   <select
                     value={filters.assigneeUserId}
                     onChange={(event) => handleFilterChange('assigneeUserId', event.target.value)}
                   >
-                    <option value="">Anyone</option>
+                    <option value="">Любой</option>
                     {availableUsers.map((user) => (
                       <option key={user.id} value={user.id}>
                         {user.displayName}
@@ -192,13 +192,13 @@ function ProjectIssuesPage() {
                   checked={filters.includeDone}
                   onChange={(event) => handleFilterChange('includeDone', event.target.checked)}
                 />
-                <span>Include done issues when no explicit status filter is selected</span>
+                <span>Показывать выполненные задачи, если явно не выбран фильтр по статусу</span>
               </label>
 
               <div>
-                <span className="issue-meta-label">Labels</span>
+                <span className="issue-meta-label">Метки</span>
                 {availableLabels.length === 0 ? (
-                  <p className="auth-subtitle">No project labels yet.</p>
+                  <p className="auth-subtitle">У проекта пока нет меток.</p>
                 ) : (
                   <div className="checkbox-list">
                     {availableLabels.map((label) => (
@@ -216,10 +216,10 @@ function ProjectIssuesPage() {
               </div>
             </section>
 
-            {isLoading ? <p className="auth-subtitle">Loading issues...</p> : null}
+            {isLoading ? <p className="auth-subtitle">Загрузка задач...</p> : null}
 
             {!isLoading && issues.length === 0 ? (
-              <p className="auth-subtitle">No issues yet. Create the first backlog item for this project.</p>
+              <p className="auth-subtitle">Задач пока нет. Создайте первый элемент backlog для этого проекта.</p>
             ) : null}
 
             {!isLoading && issues.length > 0 ? (

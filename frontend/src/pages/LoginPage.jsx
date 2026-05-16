@@ -29,9 +29,9 @@ function LoginPage() {
   return (
     <main className="page-shell">
       <section className="auth-card">
-        <span className="eyebrow">Authentication</span>
-        <h1>Sign in</h1>
-        <p className="auth-subtitle">Use your email and password to access the MVP.</p>
+        <span className="eyebrow">Аутентификация</span>
+        <h1>Войти</h1>
+        <p className="auth-subtitle">Используйте email и пароль, чтобы войти в MVP.</p>
 
         <form className="auth-form" onSubmit={handleSubmit}>
           <label>
@@ -45,7 +45,7 @@ function LoginPage() {
           </label>
 
           <label>
-            <span>Password</span>
+            <span>Пароль</span>
             <input
               type="password"
               value={form.password}
@@ -57,12 +57,12 @@ function LoginPage() {
           {error ? <p className="form-error">{error}</p> : null}
 
           <button type="submit" className="primary-button" disabled={isSubmitting}>
-            {isSubmitting ? 'Signing in...' : 'Sign in'}
+            {isSubmitting ? 'Вход...' : 'Войти'}
           </button>
         </form>
 
         <p className="auth-footer">
-          Need an account? <Link to="/register">Create one</Link>
+          Нужен аккаунт? <Link to="/register">Создать</Link>
         </p>
       </section>
     </main>

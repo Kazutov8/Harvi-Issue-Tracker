@@ -63,9 +63,9 @@ function ProjectsPage() {
       <section className="projects-layout">
         <header className="projects-header">
           <div>
-            <span className="eyebrow">Projects</span>
-            <h1>Your workspace</h1>
-            <p className="auth-subtitle">Create the first project and use it as the base for issues.</p>
+            <span className="eyebrow">Проекты</span>
+            <h1>Ваше рабочее пространство</h1>
+            <p className="auth-subtitle">Создайте первый проект и используйте его как основу для задач.</p>
           </div>
 
           <div className="projects-header-actions">
@@ -74,17 +74,17 @@ function ProjectsPage() {
               <span>{user.email}</span>
             </div>
             <button type="button" className="secondary-button" onClick={logout}>
-              Sign out
+              Выйти
             </button>
           </div>
         </header>
 
         <section className="projects-grid">
           <section className="projects-panel">
-            <h2>Create project</h2>
+            <h2>Создать проект</h2>
             <form className="auth-form" onSubmit={handleSubmit}>
               <label>
-                <span>Project name</span>
+                <span>Название проекта</span>
                 <input
                   type="text"
                   value={name}
@@ -97,21 +97,21 @@ function ProjectsPage() {
               {error ? <p className="form-error">{error}</p> : null}
 
               <button type="submit" className="primary-button" disabled={isSubmitting}>
-                {isSubmitting ? 'Creating project...' : 'Create project'}
+                {isSubmitting ? 'Создание проекта...' : 'Создать проект'}
               </button>
             </form>
           </section>
 
           <section className="projects-panel">
             <div className="projects-list-header">
-              <h2>Projects</h2>
+              <h2>Проекты</h2>
               <span className="projects-count">{projects.length}</span>
             </div>
 
-            {isLoading ? <p className="auth-subtitle">Loading projects...</p> : null}
+            {isLoading ? <p className="auth-subtitle">Загрузка проектов...</p> : null}
 
             {!isLoading && projects.length === 0 ? (
-              <p className="auth-subtitle">No projects yet. Create one to start the tracker flow.</p>
+              <p className="auth-subtitle">Проектов пока нет. Создайте первый, чтобы начать работу в трекере.</p>
             ) : null}
 
             {!isLoading && projects.length > 0 ? (

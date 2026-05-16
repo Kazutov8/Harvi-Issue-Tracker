@@ -144,7 +144,7 @@ function IssueDetailsPage() {
       )
 
       setIssue(updatedIssue)
-      setActionSuccess('AI triage suggestion was applied.')
+      setActionSuccess('Предложение AI triage применено.')
     } catch (requestError) {
       setActionError(requestError.message)
     } finally {
@@ -161,7 +161,7 @@ function IssueDetailsPage() {
     try {
       const updatedIssue = await issuesApi.assign(issueId, assigneeUserId, accessToken)
       setIssue(updatedIssue)
-      setActionSuccess('Issue assignee was updated.')
+      setActionSuccess('Исполнитель задачи обновлён.')
     } catch (requestError) {
       setActionError(requestError.message)
     } finally {
@@ -179,7 +179,7 @@ function IssueDetailsPage() {
       const updatedIssue = await issuesApi.transition(issueId, selectedStatus, accessToken)
       setIssue(updatedIssue)
       setSelectedStatus(normalizeStatusForSelect(updatedIssue.status))
-      setActionSuccess('Issue status was updated.')
+      setActionSuccess('Статус задачи обновлён.')
     } catch (requestError) {
       setActionError(requestError.message)
     } finally {
@@ -202,7 +202,7 @@ function IssueDetailsPage() {
         <section className="projects-layout">
           <p className="form-error">{error}</p>
           <button type="button" className="secondary-button" onClick={() => navigate('/projects')}>
-            Back to projects
+            Назад к проектам
           </button>
         </section>
       </main>
@@ -213,47 +213,47 @@ function IssueDetailsPage() {
     <main className="page-shell projects-shell">
       <section className="projects-layout">
         {isLoading || !issue ? (
-          <p className="auth-subtitle">Loading issue...</p>
+          <p className="auth-subtitle">Загрузка задачи...</p>
         ) : (
           <section className="projects-panel issue-details-panel">
             <div className="issue-details-header">
               <div>
-                <span className="eyebrow">Issue details</span>
+                <span className="eyebrow">Детали задачи</span>
                 <h1>{issue.title}</h1>
               </div>
               <Link to="/projects" className="secondary-button nav-link-button">
-                Back to projects
+                Назад к проектам
               </Link>
             </div>
 
             <div className="issue-meta-grid">
               <div>
-                <span className="issue-meta-label">Status</span>
+                <span className="issue-meta-label">Статус</span>
                 <strong>{issue.status}</strong>
               </div>
               <div>
-                <span className="issue-meta-label">Priority</span>
+                <span className="issue-meta-label">Приоритет</span>
                 <strong>{issue.priority}</strong>
               </div>
               <div>
-                <span className="issue-meta-label">Reporter</span>
+                <span className="issue-meta-label">Автор</span>
                 <strong>{issue.reporterUserId}</strong>
               </div>
               <div>
-                <span className="issue-meta-label">Assignee</span>
-                <strong>{issue.assigneeUserId ?? 'Unassigned'}</strong>
+                <span className="issue-meta-label">Исполнитель</span>
+                <strong>{issue.assigneeUserId ?? 'Не назначен'}</strong>
               </div>
             </div>
 
             <section className="issue-section">
-              <h2>Description</h2>
-              <p className="auth-subtitle">{issue.description || 'No description provided.'}</p>
+              <h2>Описание</h2>
+              <p className="auth-subtitle">{issue.description || 'Описание не указано.'}</p>
             </section>
 
             <section className="issue-section">
-              <h2>Labels</h2>
+              <h2>Метки</h2>
               {issue.labels.length === 0 ? (
-                <p className="auth-subtitle">No labels assigned yet.</p>
+                <p className="auth-subtitle">Пока нет назначенных меток.</p>
               ) : (
                 <ul className="label-list">
                   {issue.labels.map((label) => (
@@ -266,19 +266,19 @@ function IssueDetailsPage() {
             </section>
 
             <section className="issue-section">
-              <h2>Acceptance criteria</h2>
-              <p className="auth-subtitle">{issue.acceptanceCriteria || 'No acceptance criteria yet.'}</p>
-              {issue.acceptanceCriteriaIsAiGenerated ? <p className="issue-meta-label">Marked as AI-suggested</p> : null}
+              <h2>Критерии приёмки</h2>
+              <p className="auth-subtitle">{issue.acceptanceCriteria || 'Критериев приёмки пока нет.'}</p>
+              {issue.acceptanceCriteriaIsAiGenerated ? <p className="issue-meta-label">Отмечено как предложенное AI</p> : null}
             </section>
 
             <section className="issue-section triage-panel">
               <div className="triage-panel-header">
                 <div>
                   <h2>AI triage</h2>
-                  <p className="auth-subtitle">Get a suggested priority, labels, and acceptance criteria draft.</p>
+                  <p className="auth-subtitle">Получите предложение по приоритету, меткам и черновику критериев приёмки.</p>
                 </div>
                 <button type="button" className="primary-button" onClick={handleSuggestTriage} disabled={isSuggesting}>
-                  {isSuggesting ? 'Suggesting...' : 'AI suggest'}
+                  {isSuggesting ? 'Подготовка...' : 'Предложить через AI'}
                 </button>
               </div>
 
@@ -289,7 +289,7 @@ function IssueDetailsPage() {
                   <div className="triage-suggestion-card">
                     <form className="triage-edit-form" onSubmit={handleApplyTriage}>
                       <label>
-                        <span>Priority</span>
+                        <span>Приоритет</span>
                         <select
                           value={triageForm.priority}
                           onChange={(event) => setTriageForm((current) => ({ ...current, priority: event.target.value }))}
@@ -303,9 +303,9 @@ function IssueDetailsPage() {
                       </label>
 
                       <div>
-                        <span className="issue-meta-label">Suggested labels</span>
+                        <span className="issue-meta-label">Предложенные метки</span>
                         {suggestion.labels.length === 0 ? (
-                          <p className="auth-subtitle">No labels suggested.</p>
+                          <p className="auth-subtitle">Метки не предложены.</p>
                         ) : (
                           <div className="checkbox-list">
                             {suggestion.labels.map((label) => (
@@ -323,7 +323,7 @@ function IssueDetailsPage() {
                       </div>
 
                       <label>
-                        <span>Acceptance criteria draft</span>
+                        <span>Черновик критериев приёмки</span>
                         <textarea
                           rows={5}
                           value={triageForm.acceptanceCriteria}
@@ -334,27 +334,27 @@ function IssueDetailsPage() {
                       </label>
 
                       <button type="submit" className="primary-button" disabled={isApplyingTriage}>
-                        {isApplyingTriage ? 'Applying...' : 'Apply suggestion'}
+                        {isApplyingTriage ? 'Применение...' : 'Применить предложение'}
                       </button>
                     </form>
                   </div>
                 ) : (
                   <div className="triage-invalid-state">
-                    <p className="form-error">{suggestion.validationError || 'The AI suggestion was invalid.'}</p>
+                    <p className="form-error">{suggestion.validationError || 'Предложение AI оказалось некорректным.'}</p>
                   </div>
                 )
               ) : null}
             </section>
 
             <section className="issue-section triage-panel">
-              <h2>Manual preparation</h2>
+              <h2>Ручная подготовка</h2>
 
               <div className="triage-actions-grid">
                 <form className="triage-suggestion-card" onSubmit={handleAssign}>
                   <label>
-                    <span>Assignee</span>
+                    <span>Исполнитель</span>
                     <select value={assigneeUserId} onChange={(event) => setAssigneeUserId(event.target.value)}>
-                      <option value="">Select a user</option>
+                      <option value="">Выберите пользователя</option>
                       {availableUsers.map((user) => (
                         <option key={user.id} value={user.id}>
                           {user.displayName} ({user.email})
@@ -364,13 +364,13 @@ function IssueDetailsPage() {
                   </label>
 
                   <button type="submit" className="primary-button" disabled={isAssigning || !assigneeUserId}>
-                    {isAssigning ? 'Assigning...' : 'Assign issue'}
+                    {isAssigning ? 'Назначение...' : 'Назначить задачу'}
                   </button>
                 </form>
 
                 <form className="triage-suggestion-card" onSubmit={handleTransition}>
                   <label>
-                    <span>Status</span>
+                    <span>Статус</span>
                     <select value={selectedStatus} onChange={(event) => setSelectedStatus(event.target.value)}>
                       {STATUS_OPTIONS.map((status) => (
                         <option key={status} value={status}>
@@ -381,7 +381,7 @@ function IssueDetailsPage() {
                   </label>
 
                   <button type="submit" className="primary-button" disabled={isTransitioning}>
-                    {isTransitioning ? 'Updating...' : 'Update status'}
+                    {isTransitioning ? 'Обновление...' : 'Обновить статус'}
                   </button>
                 </form>
               </div>
