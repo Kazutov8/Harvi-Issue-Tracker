@@ -16,13 +16,13 @@ Implement the first working vertical slice of the AI issue tracker: auth, projec
 
 ## Phase 1 - Solution skeleton
 
-- [] Create backend solution and four projects: `src/IssueTracker.Domain`, `src/IssueTracker.Application`, `src/IssueTracker.Infrastructure`, `src/IssueTracker.API`
-- [] Add project references to enforce architecture boundaries
-- [] Create frontend app in `frontend/`
-- [] Configure backend startup, dependency injection, and base configuration files
-- [] Configure SQLite connection and EF Core bootstrap in Infrastructure/API
-- [] Add initial health endpoint in API
-- [] Add base frontend API client module
+- [V] Create backend solution and four projects: `src/IssueTracker.Domain`, `src/IssueTracker.Application`, `src/IssueTracker.Infrastructure`, `src/IssueTracker.API`
+- [V] Add project references to enforce architecture boundaries
+- [V] Create frontend app in `frontend/`
+- [V] Configure backend startup, dependency injection, and base configuration files
+- [V] Configure SQLite connection and EF Core bootstrap in Infrastructure/API
+- [V] Add initial health endpoint in API
+- [V] Add base frontend API client module
 
 ### Files to touch
 
