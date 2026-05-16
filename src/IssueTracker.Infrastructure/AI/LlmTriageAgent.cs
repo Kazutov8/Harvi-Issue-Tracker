@@ -17,7 +17,7 @@ public sealed class LlmTriageAgent(HttpClient httpClient, IOptions<TriageOptions
         var chatRequest = new ChatCompletionsRequest(
             _options.Model,
             [
-                new ChatMessage("system", "You generate issue triage suggestions. Return JSON only with fields: priority, labels, acceptanceCriteria. Use only labels explicitly provided for the project. Never invent labels. If no labels are available, return an empty labels array. Placeholder values like none, null, and n/a are not valid labels unless explicitly provided."),
+                new ChatMessage("system", "You generate issue triage suggestions. Return JSON only with fields: priority, labels, acceptanceCriteria. Use only labels explicitly provided for the project. Never invent labels. If no labels are available, return an empty labels array. Placeholder values like none, null, and n/a are not valid labels unless explicitly provided. The acceptanceCriteria text must be written in Russian."),
                 new ChatMessage("user", prompt),
             ]);
 
@@ -69,6 +69,7 @@ public sealed class LlmTriageAgent(HttpClient httpClient, IOptions<TriageOptions
             builder.AppendLine("Use only labels from the available labels list.");
         }
 
+        builder.AppendLine("Write the acceptanceCriteria text in Russian.");
         builder.AppendLine("Return strict JSON with this shape:");
         builder.AppendLine("{\"priority\":\"medium\",\"labels\":[],\"acceptanceCriteria\":\"...\"}");
         return builder.ToString();
