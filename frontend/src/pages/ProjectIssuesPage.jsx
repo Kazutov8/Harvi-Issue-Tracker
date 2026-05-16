@@ -15,6 +15,8 @@ const STATUS_OPTIONS = [
 function ProjectIssuesPage() {
   const { projectSlug } = useParams()
   const { accessToken } = useAuth()
+  const halfWidthFieldStyle = { display: 'flex', flexDirection: 'column', gap: '8px', width: '50%' }
+  const fullWidthControlStyle = { width: '100%' }
   const [issues, setIssues] = useState([])
   const [availableLabels, setAvailableLabels] = useState([])
   const [availableUsers, setAvailableUsers] = useState([])
@@ -150,18 +152,23 @@ function ProjectIssuesPage() {
             <section className="issue-section">
               <h3>Фильтры</h3>
               <div className="project-issues-filters-stack">
-                <label className="project-issues-filter-field" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <label className="project-issues-filter-field" style={halfWidthFieldStyle}>
                   <span>Поиск</span>
                   <input
                     value={filters.query}
                     onChange={(event) => handleFilterChange('query', event.target.value)}
                     placeholder="Искать по заголовку или описанию"
+                    style={fullWidthControlStyle}
                   />
                 </label>
 
-                <label className="project-issues-filter-field" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <label className="project-issues-filter-field" style={halfWidthFieldStyle}>
                   <span>Статус</span>
-                  <select value={filters.status} onChange={(event) => handleFilterChange('status', event.target.value)}>
+                  <select
+                    value={filters.status}
+                    onChange={(event) => handleFilterChange('status', event.target.value)}
+                    style={fullWidthControlStyle}
+                  >
                     {STATUS_OPTIONS.map((option) => (
                       <option key={option.value || 'all'} value={option.value}>
                         {option.label}
@@ -170,11 +177,12 @@ function ProjectIssuesPage() {
                   </select>
                 </label>
 
-                <label className="project-issues-filter-field" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <label className="project-issues-filter-field" style={halfWidthFieldStyle}>
                   <span>Исполнитель</span>
                   <select
                     value={filters.assigneeUserId}
                     onChange={(event) => handleFilterChange('assigneeUserId', event.target.value)}
+                    style={fullWidthControlStyle}
                   >
                     <option value="">Любой</option>
                     {availableUsers.map((user) => (
