@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using IssueTracker.API.Contracts.Auth;
+using IssueTracker.API.Infrastructure;
 using IssueTracker.Application.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,13 +18,6 @@ public sealed class AuthController(
     [HttpPost("register")]
     public async Task<ActionResult<AuthResponse>> Register(RegisterRequest request, CancellationToken cancellationToken)
     {
-        if (string.IsNullOrWhiteSpace(request.Email)
-            || string.IsNullOrWhiteSpace(request.Password)
-            || string.IsNullOrWhiteSpace(request.DisplayName))
-        {
-            return ValidationProblem("Email, password, and display name are required.");
-        }
-
         try
         {
             var result = await registerUser.ExecuteAsync(request.Email, request.Password, request.DisplayName, cancellationToken);
@@ -31,23 +25,18 @@ public sealed class AuthController(
         }
         catch (InvalidOperationException exception)
         {
-            return Conflict(new { message = exception.Message });
+            return ApiProblemDetailsFactory.Create(this, StatusCodes.Status409Conflict, "Conflict", exception.Message);
         }
     }
 
     [HttpPost("login")]
     public async Task<ActionResult<AuthResponse>> Login(LoginRequest request, CancellationToken cancellationToken)
     {
-        if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Password))
-        {
-            return ValidationProblem("Email and password are required.");
-        }
-
         var result = await loginUser.ExecuteAsync(request.Email, request.Password, cancellationToken);
 
         if (result is null)
         {
-            return Unauthorized(new { message = "Invalid email or password." });
+            return ApiProblemDetailsFactory.Create(this, StatusCodes.Status401Unauthorized, "Unauthorized", "Invalid email or password.");
         }
 
         return Ok(ToResponse(result));

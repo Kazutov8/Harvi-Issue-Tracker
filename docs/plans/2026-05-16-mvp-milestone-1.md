@@ -221,15 +221,15 @@ Implement the first working vertical slice of the AI issue tracker: auth, projec
 
 ## Phase 8 - Hardening and demo readiness
 
-- [] Add request validation for auth, project, issue, and triage endpoints
-- [] Add consistent API error responses
-- [] Extend integration coverage for validation errors, consistent error responses, and critical end-to-end API paths
-- [] Refine the AI triage prompt so empty project label sets require `labels: []` and invented placeholder labels are explicitly disallowed
-- [] Add automated coverage for empty available-label scenarios and invented-label rejection in AI triage
-- [] Add a small set of reference issues for manual AI triage evaluation
-- [] Add demo seed data for local setup
-- [] Review naming and remove dead code introduced during implementation
-- [] Verify the full milestone scenario end-to-end
+- [V] Add request validation for auth, project, issue, and triage endpoints
+- [V] Add consistent API error responses
+- [V] Extend integration coverage for validation errors, consistent error responses, and critical end-to-end API paths
+- [V] Refine the AI triage prompt so empty project label sets require `labels: []` and invented placeholder labels are explicitly disallowed
+- [V] Add automated coverage for empty available-label scenarios and invented-label rejection in AI triage
+- [V] Add a small set of reference issues for manual AI triage evaluation
+- [V] Add demo seed data for local setup
+- [V] Review naming and remove dead code introduced during implementation
+- [V] Verify the full milestone scenario end-to-end
 
 ### Files to touch
 

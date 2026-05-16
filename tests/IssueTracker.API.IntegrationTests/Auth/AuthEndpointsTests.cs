@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using IssueTracker.API.IntegrationTests.Common;
 using IssueTracker.API.IntegrationTests.TestHost;
 using Xunit;
 
@@ -102,5 +103,23 @@ public sealed class AuthEndpointsTests
         Assert.True(users.Count >= 2);
         Assert.Contains(users, user => user.Email == "dave@example.com");
         Assert.Contains(users, user => user.Email == "erin@example.com");
+    }
+
+    [Fact]
+    public async Task Register_ReturnsValidationError_WhenRequestIsInvalid()
+    {
+        await using var factory = new ApiTestFactory();
+        using var client = factory.CreateClient();
+
+        var response = await client.PostAsJsonAsync("/auth/register", new RegisterRequest("bad-email", "123", ""));
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+
+        var body = await response.Content.ReadFromJsonAsync<ApiErrorResponse>();
+        Assert.NotNull(body);
+        Assert.Equal(400, body.Status);
+        Assert.Equal("Validation failed.", body.Title);
+        Assert.NotNull(body.Errors);
+        Assert.Contains("Email", body.Errors.Keys);
     }
 }

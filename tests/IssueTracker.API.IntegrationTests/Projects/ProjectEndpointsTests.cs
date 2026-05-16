@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using IssueTracker.API.IntegrationTests.Auth;
+using IssueTracker.API.IntegrationTests.Common;
 using IssueTracker.API.IntegrationTests.TestHost;
 using Xunit;
 
@@ -52,6 +53,25 @@ public sealed class ProjectEndpointsTests
             body,
             first => Assert.Equal("alpha-project", first.Slug),
             second => Assert.Equal("beta-project", second.Slug));
+    }
+
+    [Fact]
+    public async Task Create_ReturnsValidationError_WhenNameIsMissing()
+    {
+        await using var factory = new ApiTestFactory();
+        using var client = factory.CreateClient();
+
+        await RegisterAndAuthenticateAsync(client, "project-invalid@example.com");
+
+        var response = await client.PostAsJsonAsync("/projects", new CreateProjectRequest(""));
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+
+        var body = await response.Content.ReadFromJsonAsync<ApiErrorResponse>();
+        Assert.NotNull(body);
+        Assert.Equal(400, body.Status);
+        Assert.NotNull(body.Errors);
+        Assert.Contains("Name", body.Errors.Keys);
     }
 
     private static async Task<AuthResponse> RegisterAndAuthenticateAsync(HttpClient client, string email)

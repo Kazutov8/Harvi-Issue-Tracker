@@ -62,11 +62,13 @@ public sealed class LlmTriageAgent(HttpClient httpClient, IOptions<TriageOptions
         {
             builder.AppendLine("Available labels: no project labels are available.");
             builder.AppendLine("Return \"labels\": [] and do not invent placeholder labels like \"none\", \"null\", or \"n/a\".");
+            builder.AppendLine("A non-empty labels array is invalid for this request.");
         }
         else
         {
             builder.AppendLine($"Available labels: {string.Join(", ", request.AvailableLabels)}");
             builder.AppendLine("Use only labels from the available labels list.");
+            builder.AppendLine("Do not output placeholders, synonyms, or inferred labels outside that list.");
         }
 
         builder.AppendLine("Write the acceptanceCriteria text in Russian.");

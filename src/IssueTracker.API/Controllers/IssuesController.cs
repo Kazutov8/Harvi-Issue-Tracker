@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using IssueTracker.API.Contracts.Issues;
 using IssueTracker.API.Contracts.Labels;
+using IssueTracker.API.Infrastructure;
 using IssueTracker.Application.Issues;
 using IssueTracker.Application.Labels;
 using IssueTracker.Domain.Enums;
@@ -27,11 +28,6 @@ public sealed class IssuesController(
         CreateIssueRequest request,
         CancellationToken cancellationToken)
     {
-        if (string.IsNullOrWhiteSpace(request.Title))
-        {
-            return ValidationProblem("Issue title is required.");
-        }
-
         var userIdValue = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
         if (!Guid.TryParse(userIdValue, out var reporterUserId))
@@ -46,7 +42,7 @@ public sealed class IssuesController(
         }
         catch (InvalidOperationException exception)
         {
-            return NotFound(new { message = exception.Message });
+            return ApiProblemDetailsFactory.Create(this, StatusCodes.Status404NotFound, "Not Found", exception.Message);
         }
     }
 
@@ -64,7 +60,8 @@ public sealed class IssuesController(
     {
         if (!TryParseStatus(status, out var parsedStatus))
         {
-            return ValidationProblem("Status value is invalid.");
+            ModelState.AddModelError(nameof(status), "Status value is invalid.");
+            return ApiProblemDetailsFactory.CreateValidation(ControllerContext);
         }
 
         try
@@ -85,7 +82,7 @@ public sealed class IssuesController(
         }
         catch (InvalidOperationException exception)
         {
-            return NotFound(new { message = exception.Message });
+            return ApiProblemDetailsFactory.Create(this, StatusCodes.Status404NotFound, "Not Found", exception.Message);
         }
     }
 
@@ -99,7 +96,7 @@ public sealed class IssuesController(
         }
         catch (InvalidOperationException exception)
         {
-            return NotFound(new { message = exception.Message });
+            return ApiProblemDetailsFactory.Create(this, StatusCodes.Status404NotFound, "Not Found", exception.Message);
         }
     }
 
@@ -110,7 +107,7 @@ public sealed class IssuesController(
 
         if (issue is null)
         {
-            return NotFound(new { message = "Issue was not found." });
+            return ApiProblemDetailsFactory.Create(this, StatusCodes.Status404NotFound, "Not Found", "Issue was not found.");
         }
 
         return Ok(ToResponse(issue));
@@ -132,11 +129,11 @@ public sealed class IssuesController(
         }
         catch (InvalidOperationException exception) when (exception.Message == "Issue was not found.")
         {
-            return NotFound(new { message = exception.Message });
+            return ApiProblemDetailsFactory.Create(this, StatusCodes.Status404NotFound, "Not Found", exception.Message);
         }
         catch (InvalidOperationException exception)
         {
-            return StatusCode(StatusCodes.Status502BadGateway, new { message = exception.Message });
+            return ApiProblemDetailsFactory.Create(this, StatusCodes.Status502BadGateway, "Bad Gateway", exception.Message);
         }
     }
 
@@ -148,7 +145,8 @@ public sealed class IssuesController(
     {
         if (!Enum.TryParse<IssuePriority>(request.Priority, true, out var priority))
         {
-            return ValidationProblem("Priority value is invalid.");
+            ModelState.AddModelError(nameof(request.Priority), "Priority value is invalid.");
+            return ApiProblemDetailsFactory.CreateValidation(ControllerContext);
         }
 
         try
@@ -164,7 +162,7 @@ public sealed class IssuesController(
         }
         catch (InvalidOperationException exception)
         {
-            return NotFound(new { message = exception.Message });
+            return ApiProblemDetailsFactory.Create(this, StatusCodes.Status404NotFound, "Not Found", exception.Message);
         }
     }
 
@@ -176,7 +174,8 @@ public sealed class IssuesController(
     {
         if (request.AssigneeUserId == Guid.Empty)
         {
-            return ValidationProblem("Assignee user id is required.");
+            ModelState.AddModelError(nameof(request.AssigneeUserId), "Assignee user id is required.");
+            return ApiProblemDetailsFactory.CreateValidation(ControllerContext);
         }
 
         try
@@ -186,7 +185,7 @@ public sealed class IssuesController(
         }
         catch (InvalidOperationException exception)
         {
-            return NotFound(new { message = exception.Message });
+            return ApiProblemDetailsFactory.Create(this, StatusCodes.Status404NotFound, "Not Found", exception.Message);
         }
     }
 
@@ -198,7 +197,8 @@ public sealed class IssuesController(
     {
         if (!Enum.TryParse<IssueStatus>(request.Status, true, out var status))
         {
-            return ValidationProblem("Status value is invalid.");
+            ModelState.AddModelError(nameof(request.Status), "Status value is invalid.");
+            return ApiProblemDetailsFactory.CreateValidation(ControllerContext);
         }
 
         try
@@ -208,7 +208,7 @@ public sealed class IssuesController(
         }
         catch (InvalidOperationException exception)
         {
-            return NotFound(new { message = exception.Message });
+            return ApiProblemDetailsFactory.Create(this, StatusCodes.Status404NotFound, "Not Found", exception.Message);
         }
     }
 

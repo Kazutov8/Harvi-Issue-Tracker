@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using IssueTracker.API.Contracts.Projects;
+using IssueTracker.API.Infrastructure;
 using IssueTracker.Application.Projects;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,11 +15,6 @@ public sealed class ProjectsController(CreateProject createProject, ListProjects
     [HttpPost]
     public async Task<ActionResult<ProjectResponse>> Create(CreateProjectRequest request, CancellationToken cancellationToken)
     {
-        if (string.IsNullOrWhiteSpace(request.Name))
-        {
-            return ValidationProblem("Project name is required.");
-        }
-
         var userIdValue = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
         if (!Guid.TryParse(userIdValue, out var userId))
@@ -33,7 +29,7 @@ public sealed class ProjectsController(CreateProject createProject, ListProjects
         }
         catch (InvalidOperationException exception)
         {
-            return Conflict(new { message = exception.Message });
+            return ApiProblemDetailsFactory.Create(this, StatusCodes.Status409Conflict, "Conflict", exception.Message);
         }
     }
 

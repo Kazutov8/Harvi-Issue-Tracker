@@ -3,6 +3,7 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Web;
 using IssueTracker.API.IntegrationTests.Auth;
+using IssueTracker.API.IntegrationTests.Common;
 using IssueTracker.API.IntegrationTests.Projects;
 using IssueTracker.Application.Abstractions;
 using IssueTracker.API.IntegrationTests.TestHost;
@@ -260,6 +261,78 @@ public sealed class IssueEndpointsTests
         var response = await client.PostAsync($"/issues/{createdIssue.Id}/ai-suggest", null);
 
         Assert.Equal(HttpStatusCode.BadGateway, response.StatusCode);
+
+        var body = await response.Content.ReadFromJsonAsync<ApiErrorResponse>();
+        Assert.NotNull(body);
+        Assert.Equal(502, body.Status);
+    }
+
+    [Fact]
+    public async Task Create_ReturnsValidationError_WhenTitleIsMissing()
+    {
+        await using var factory = new ApiTestFactory();
+        using var client = factory.CreateClient();
+
+        await RegisterAndAuthenticateAsync(client, "issue-invalid@example.com");
+        var project = await CreateProjectAsync(client, "Validation Project");
+
+        var response = await client.PostAsJsonAsync(
+            $"/projects/{project.Slug}/issues",
+            new CreateIssueRequest("", null));
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+
+        var body = await response.Content.ReadFromJsonAsync<ApiErrorResponse>();
+        Assert.NotNull(body);
+        Assert.Equal(400, body.Status);
+        Assert.NotNull(body.Errors);
+        Assert.Contains("Title", body.Errors.Keys);
+    }
+
+    [Fact]
+    public async Task ApplyTriageSuggestion_ReturnsValidationError_WhenPriorityIsInvalid()
+    {
+        await using var factory = new ApiTestFactory();
+        using var client = factory.CreateClient();
+
+        await RegisterAndAuthenticateAsync(client, "issue-priority-invalid@example.com");
+        var project = await CreateProjectAsync(client, "Priority Validation");
+        var issue = await CreateIssueAsync(client, project.Slug, "Broken login", null);
+
+        var response = await client.PostAsJsonAsync(
+            $"/issues/{issue.Id}/apply-triage-suggestion",
+            new ApplyIssueTriageRequest("urgent", [], null));
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+
+        var body = await response.Content.ReadFromJsonAsync<ApiErrorResponse>();
+        Assert.NotNull(body);
+        Assert.NotNull(body.Errors);
+        Assert.Contains("Priority", body.Errors.Keys);
+    }
+
+    [Fact]
+    public async Task SuggestAiTriage_ReturnsInvalidSuggestion_WhenProjectHasNoLabelsAndAiInventsLabel()
+    {
+        await using var factory = new ApiTestFactory(services =>
+        {
+            services.AddScoped<ITriageAgent>(_ => new FakeTriageAgent(_ => new TriageAgentResponse("medium", ["none"], "Draft criteria")));
+        });
+
+        using var client = factory.CreateClient();
+
+        await RegisterAndAuthenticateAsync(client, "issue-no-labels@example.com");
+        var project = await CreateProjectAsync(client, "No Labels Project");
+        var issue = await CreateIssueAsync(client, project.Slug, "Only title", null);
+
+        var response = await client.PostAsync($"/issues/{issue.Id}/ai-suggest", null);
+
+        Assert.Equal((HttpStatusCode)422, response.StatusCode);
+
+        var body = await response.Content.ReadFromJsonAsync<IssueTriageSuggestionResponse>();
+        Assert.NotNull(body);
+        Assert.False(body.IsValid);
+        Assert.Equal("AI suggested an unknown label: 'none'.", body.ValidationError);
     }
 
     [Fact]
