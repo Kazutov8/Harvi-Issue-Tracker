@@ -244,6 +244,26 @@
   gap: 16px;
 }
 
+.project-issues-filters-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.project-issues-filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.project-issues-filter-field > input,
+.project-issues-filter-field > select {
+  width: 50%;
+  max-width: 50%;
+  align-self: flex-start;
+  flex: 0 0 auto;
+}
+
 .form-success {
   color: #7ee787;
 }
@@ -256,5 +276,11 @@
 
   .triage-actions-grid {
     grid-template-columns: 1fr;
+  }
+
+  .project-issues-filter-field > input,
+  .project-issues-filter-field > select {
+    width: 100%;
+    max-width: 100%;
   }
 }

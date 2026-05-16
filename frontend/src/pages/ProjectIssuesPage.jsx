@@ -149,8 +149,8 @@ function ProjectIssuesPage() {
 
             <section className="issue-section">
               <h3>Фильтры</h3>
-              <div className="triage-actions-grid">
-                <label>
+              <div className="project-issues-filters-stack">
+                <label className="project-issues-filter-field" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   <span>Поиск</span>
                   <input
                     value={filters.query}
@@ -159,7 +159,7 @@ function ProjectIssuesPage() {
                   />
                 </label>
 
-                <label>
+                <label className="project-issues-filter-field" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   <span>Статус</span>
                   <select value={filters.status} onChange={(event) => handleFilterChange('status', event.target.value)}>
                     {STATUS_OPTIONS.map((option) => (
@@ -170,7 +170,7 @@ function ProjectIssuesPage() {
                   </select>
                 </label>
 
-                <label>
+                <label className="project-issues-filter-field" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   <span>Исполнитель</span>
                   <select
                     value={filters.assigneeUserId}
