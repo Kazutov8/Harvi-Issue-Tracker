@@ -1,6 +1,7 @@
 using System.Text;
 using IssueTracker.Application.Abstractions;
 using IssueTracker.Application.Auth;
+using IssueTracker.Application.Projects;
 using IssueTracker.Infrastructure.Auth;
 using IssueTracker.Infrastructure.Persistence;
 using IssueTracker.Infrastructure.Persistence.Repositories;
@@ -36,9 +37,12 @@ public static class DependencyInjection
             options.UseSqlite(connectionString));
 
         services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<IssueTrackerDbContext>());
+        services.AddScoped<IProjectRepository, ProjectRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+        services.AddScoped<CreateProject>();
+        services.AddScoped<ListProjects>();
         services.AddScoped<RegisterUser>();
         services.AddScoped<LoginUser>();
         services.AddScoped<GetCurrentUser>();

@@ -77,14 +77,14 @@ Implement the first working vertical slice of the AI issue tracker: auth, projec
 
 ## Phase 3 - Projects vertical slice
 
-- [] Add `Project` entity in `src/IssueTracker.Domain/Entities`
-- [] Add project repository abstraction in `src/IssueTracker.Application/Abstractions`
-- [] Add `CreateProject` and `ListProjects` use cases in `src/IssueTracker.Application/Projects`
-- [] Add EF Core project mapping and repository implementation in `src/IssueTracker.Infrastructure/Persistence`
-- [] Add project endpoints in `src/IssueTracker.API/Controllers`
-- [] Add project contracts in `src/IssueTracker.API/Contracts/Projects`
-- [] Add projects list/create UI in `frontend/src/pages` and `frontend/src/projects`
-- [] Add integration tests for project creation and project listing
+- [V] Add `Project` entity in `src/IssueTracker.Domain/Entities`
+- [V] Add project repository abstraction in `src/IssueTracker.Application/Abstractions`
+- [V] Add `CreateProject` and `ListProjects` use cases in `src/IssueTracker.Application/Projects`
+- [V] Add EF Core project mapping and repository implementation in `src/IssueTracker.Infrastructure/Persistence`
+- [V] Add project endpoints in `src/IssueTracker.API/Controllers`
+- [V] Add project contracts in `src/IssueTracker.API/Contracts/Projects`
+- [V] Add projects list/create UI in `frontend/src/pages` and `frontend/src/projects`
+- [V] Add integration tests for project creation and project listing
 
 ### Files to touch
 
@@ -222,7 +222,7 @@ Implement the first working vertical slice of the AI issue tracker: auth, projec
 ## End-to-end acceptance checklist
 
 - [V] User can register and log in
-- [] User can create a project
+- [V] User can create a project
 - [] User can create an issue with title only
 - [] New issue starts in `backlog` with `medium` priority and no assignee
 - [] User can request AI triage for the issue
