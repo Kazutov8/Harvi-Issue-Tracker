@@ -1,5 +1,15 @@
 # React + Vite
 
+## Local development
+
+By default, the frontend sends relative API requests and relies on the Vite dev proxy.
+
+- Start the ASP.NET backend locally on `https://localhost:7017`.
+- If HTTPS requests fail, trust the local ASP.NET development certificate first.
+- If you need a different backend address, create `frontend/.env.local` with `VITE_API_BASE_URL=...`.
+
+The default dev setup proxies only requests under `/api`, so browser routes like `/projects/testproject/issues` stay in the React app and are no longer mistaken for backend endpoints.
+
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:

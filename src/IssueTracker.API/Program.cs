@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 const string FrontendDevCorsPolicy = "FrontendDevCorsPolicy";
 
+builder.WebHost.UseUrls("https://localhost:7017", "http://localhost:5013");
+
 builder.Services.AddControllers();
 builder.Services.Configure<ApiBehaviorOptions>(options =>
 {

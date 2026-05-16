@@ -14,6 +14,16 @@ Current module includes:
 
 All endpoints except `POST /auth/register` and `POST /auth/login` require authentication.
 
+## Local Development Integration
+
+- backend local development URL is fixed to `https://localhost:7017`
+- backend also listens on `http://localhost:5013`
+- frontend dev mode sends API calls through the Vite proxy under the `/api` prefix
+- Vite proxy rewrites `/api/*` to backend routes without the `/api` prefix
+- frontend browser routes such as `/projects/{projectSlug}/issues` must stay client-side routes and must not be proxied to backend
+- `frontend/.env.local` may override the frontend API base URL with `VITE_API_BASE_URL`
+- if local HTTPS fails, the developer must trust the ASP.NET development certificate
+
 ## Data Model
 
 ### User
@@ -425,6 +435,8 @@ Behavior:
 - label matching for AI suggestion is case-insensitive through normalized label names.
 - `title`, `description`, `name`, and similar text inputs are trimmed before persistence where handled by domain/application code.
 - development startup runs EF Core migrations automatically and seeds demo data.
+- backend startup is pinned to stable local addresses for MVP development instead of relying only on IDE launch defaults.
+- frontend development uses the `/api` prefix specifically to avoid collisions between API proxy rules and React Router page URLs.
 
 ## Demo Seed Data
 In development only, startup seeds:
