@@ -18,3 +18,11 @@ public sealed record IssueResponse(
     DateTime CreatedAtUtc,
     DateTime? ClosedAtUtc,
     IReadOnlyList<IssueLabelResponse> Labels);
+
+public sealed record IssueTriageSuggestionResponse(
+    Guid IssueId,
+    string Priority,
+    IReadOnlyList<IssueLabelResponse> Labels,
+    string? AcceptanceCriteria,
+    bool IsValid,
+    string? ValidationError);

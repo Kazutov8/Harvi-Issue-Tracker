@@ -3,7 +3,11 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using IssueTracker.API.IntegrationTests.Auth;
 using IssueTracker.API.IntegrationTests.Projects;
+using IssueTracker.Application.Abstractions;
 using IssueTracker.API.IntegrationTests.TestHost;
+using IssueTracker.Domain.Entities;
+using IssueTracker.Infrastructure.Persistence;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace IssueTracker.API.IntegrationTests.Issues;
@@ -93,6 +97,82 @@ public sealed class IssueEndpointsTests
         Assert.Equal(2, body.Count);
         Assert.Equal("Second issue", body[0].Title);
         Assert.Equal("First issue", body[1].Title);
+    }
+
+    [Fact]
+    public async Task SuggestAiTriage_ReturnsValidatedSuggestion()
+    {
+        Guid projectId = Guid.Empty;
+
+        await using var factory = new ApiTestFactory(
+            services =>
+            {
+                services.AddScoped<ITriageAgent>(_ => new FakeTriageAgent(_ =>
+                    new TriageAgentResponse("high", ["bug"], "User can log in after entering valid credentials.")));
+            });
+
+        using var client = factory.CreateClient();
+
+        await RegisterAndAuthenticateAsync(client, "issue-triage@example.com");
+        var project = await CreateProjectAsync(client, "Triaged Project");
+        projectId = project.Id;
+
+        await using (var scope = factory.Services.CreateAsyncScope())
+        {
+            var dbContext = scope.ServiceProvider.GetRequiredService<IssueTrackerDbContext>();
+            dbContext.Labels.Add(Label.Create(projectId, "bug"));
+            await dbContext.SaveChangesAsync();
+        }
+
+        var createResponse = await client.PostAsJsonAsync(
+            $"/projects/{project.Slug}/issues",
+            new CreateIssueRequest("Login is broken", "Users cannot enter the dashboard."));
+
+        var createdIssue = await createResponse.Content.ReadFromJsonAsync<IssueResponse>();
+        Assert.NotNull(createdIssue);
+
+        var response = await client.PostAsync($"/issues/{createdIssue.Id}/ai-suggest", null);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var body = await response.Content.ReadFromJsonAsync<IssueTriageSuggestionResponse>();
+        Assert.NotNull(body);
+        Assert.True(body.IsValid);
+        Assert.Equal("high", body.Priority);
+        Assert.Single(body.Labels);
+        Assert.Equal("bug", body.Labels[0].Name);
+    }
+
+    [Fact]
+    public async Task SuggestAiTriage_ReturnsBadGatewayWhenProviderFails()
+    {
+        await using var factory = new ApiTestFactory(services =>
+        {
+            services.AddScoped<ITriageAgent>(_ => new ThrowingTriageAgent());
+        });
+
+        using var client = factory.CreateClient();
+
+        await RegisterAndAuthenticateAsync(client, "issue-triage-fail@example.com");
+        var project = await CreateProjectAsync(client, "Triage Failure Project");
+        var createResponse = await client.PostAsJsonAsync(
+            $"/projects/{project.Slug}/issues",
+            new CreateIssueRequest("API timeout", null));
+
+        var createdIssue = await createResponse.Content.ReadFromJsonAsync<IssueResponse>();
+        Assert.NotNull(createdIssue);
+
+        var response = await client.PostAsync($"/issues/{createdIssue.Id}/ai-suggest", null);
+
+        Assert.Equal(HttpStatusCode.BadGateway, response.StatusCode);
+    }
+
+    private sealed class ThrowingTriageAgent : ITriageAgent
+    {
+        public Task<TriageAgentResponse> SuggestAsync(TriageAgentRequest request, CancellationToken cancellationToken = default)
+        {
+            throw new InvalidOperationException("AI provider request failed.");
+        }
     }
 
     private static async Task<AuthResponse> RegisterAndAuthenticateAsync(HttpClient client, string email)

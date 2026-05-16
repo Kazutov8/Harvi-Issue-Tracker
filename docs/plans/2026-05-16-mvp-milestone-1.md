@@ -151,17 +151,17 @@ Implement the first working vertical slice of the AI issue tracker: auth, projec
 
 ## Phase 5 - AI triage vertical slice
 
-- [] Add `ITriageAgent` abstraction in `src/IssueTracker.Application/Abstractions`
-- [] Add triage suggestion DTOs in `src/IssueTracker.Application/Issues` or dedicated triage folder
-- [] Implement `SuggestIssueTriage` use case with validation of AI output
-- [] Implement concrete LLM-backed triage agent in `src/IssueTracker.Infrastructure/AI` using an OpenAI-compatible chat completions API
-- [] Add AI-related configuration in API/Infrastructure settings for local LM Studio integration (`BaseUrl`, `Model`, `Timeout`)
-- [] Add `POST /issues/{id}/ai-suggest` endpoint in `src/IssueTracker.API/Controllers`
-- [] Add AI suggestion contracts in `src/IssueTracker.API/Contracts/Issues`
-- [] Add frontend AI triage panel on issue details page
-- [] Add UI states for loading, success, invalid suggestion, and provider failure
-- [] Add application tests for AI suggestion validation and invalid label or priority handling
-- [] Add integration tests for successful AI triage suggestion and provider failure path
+- [V] Add `ITriageAgent` abstraction in `src/IssueTracker.Application/Abstractions`
+- [V] Add triage suggestion DTOs in `src/IssueTracker.Application/Issues` or dedicated triage folder
+- [V] Implement `SuggestIssueTriage` use case with validation of AI output
+- [V] Implement concrete LLM-backed triage agent in `src/IssueTracker.Infrastructure/AI` using an OpenAI-compatible chat completions API
+- [V] Add AI-related configuration in API/Infrastructure settings for local LM Studio integration (`BaseUrl`, `Model`, `Timeout`)
+- [V] Add `POST /issues/{id}/ai-suggest` endpoint in `src/IssueTracker.API/Controllers`
+- [V] Add AI suggestion contracts in `src/IssueTracker.API/Contracts/Issues`
+- [V] Add frontend AI triage panel on issue details page
+- [V] Add UI states for loading, success, invalid suggestion, and provider failure
+- [V] Add application tests for AI suggestion validation and invalid label or priority handling
+- [V] Add integration tests for successful AI triage suggestion and provider failure path
 
 ### Files to touch
 
@@ -243,8 +243,8 @@ Implement the first working vertical slice of the AI issue tracker: auth, projec
 - [V] User can create a project
 - [V] User can create an issue with title only
 - [V] New issue starts in `backlog` with `medium` priority and no assignee
-- [] User can request AI triage for the issue
-- [] User receives suggested priority, labels, and acceptance criteria
+- [V] User can request AI triage for the issue
+- [V] User receives suggested priority, labels, and acceptance criteria
 - [] User can edit or accept the suggestion
 - [] User can assign the issue
 - [] User can move the issue to `todo`

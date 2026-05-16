@@ -12,6 +12,14 @@ namespace IssueTracker.API.IntegrationTests.TestHost;
 public sealed class ApiTestFactory : WebApplicationFactory<Program>, IAsyncDisposable
 {
     private readonly string _databasePath = Path.Combine(Path.GetTempPath(), $"issue-tracker-tests-{Guid.NewGuid():N}.db");
+    private readonly Action<IServiceCollection>? _configureServices;
+    private readonly Func<IServiceProvider, Task>? _seedDatabaseAsync;
+
+    public ApiTestFactory(Action<IServiceCollection>? configureServices = null, Func<IServiceProvider, Task>? seedDatabaseAsync = null)
+    {
+        _configureServices = configureServices;
+        _seedDatabaseAsync = seedDatabaseAsync;
+    }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
@@ -37,11 +45,14 @@ public sealed class ApiTestFactory : WebApplicationFactory<Program>, IAsyncDispo
             services.AddDbContext<IssueTrackerDbContext>(options =>
                 options.UseSqlite($"Data Source={_databasePath}"));
 
+            _configureServices?.Invoke(services);
+
             using var serviceProvider = services.BuildServiceProvider();
             using var scope = serviceProvider.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<IssueTrackerDbContext>();
             dbContext.Database.EnsureDeleted();
             dbContext.Database.Migrate();
+            _seedDatabaseAsync?.Invoke(scope.ServiceProvider).GetAwaiter().GetResult();
         });
     }
 

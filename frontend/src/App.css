@@ -182,3 +182,34 @@
     border-right-color: var(--border);
   }
 }
+
+.triage-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.triage-panel-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.triage-suggestion-card,
+.triage-invalid-state {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface, rgba(255, 255, 255, 0.03));
+}
+
+@media (max-width: 720px) {
+  .triage-panel-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

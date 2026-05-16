@@ -14,7 +14,8 @@ public sealed class IssuesController(
     CreateIssue createIssue,
     GetIssueDetails getIssueDetails,
     ListProjectIssues listProjectIssues,
-    ListProjectLabels listProjectLabels) : ControllerBase
+    ListProjectLabels listProjectLabels,
+    SuggestIssueTriage suggestIssueTriage) : ControllerBase
 {
     [HttpPost("projects/{projectSlug}/issues")]
     public async Task<ActionResult<IssueResponse>> Create(
@@ -86,6 +87,30 @@ public sealed class IssuesController(
         return Ok(ToResponse(issue));
     }
 
+    [HttpPost("issues/{id:guid}/ai-suggest")]
+    public async Task<ActionResult<IssueTriageSuggestionResponse>> Suggest(Guid id, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var suggestion = await suggestIssueTriage.ExecuteAsync(id, cancellationToken);
+
+            if (!suggestion.IsValid)
+            {
+                return UnprocessableEntity(ToSuggestionResponse(suggestion));
+            }
+
+            return Ok(ToSuggestionResponse(suggestion));
+        }
+        catch (InvalidOperationException exception) when (exception.Message == "Issue was not found.")
+        {
+            return NotFound(new { message = exception.Message });
+        }
+        catch (InvalidOperationException exception)
+        {
+            return StatusCode(StatusCodes.Status502BadGateway, new { message = exception.Message });
+        }
+    }
+
     private static IssueResponse ToResponse(IssueDto issue)
     {
         return new IssueResponse(
@@ -102,5 +127,16 @@ public sealed class IssuesController(
             issue.CreatedAtUtc,
             issue.ClosedAtUtc,
             issue.Labels.Select(label => new IssueLabelResponse(label.Id, label.Name)).ToList());
+    }
+
+    private static IssueTriageSuggestionResponse ToSuggestionResponse(IssueTriageSuggestionDto suggestion)
+    {
+        return new IssueTriageSuggestionResponse(
+            suggestion.IssueId,
+            suggestion.Priority.ToString().ToLowerInvariant(),
+            suggestion.Labels.Select(label => new IssueLabelResponse(label.Id, label.Name)).ToList(),
+            suggestion.AcceptanceCriteria,
+            suggestion.IsValid,
+            suggestion.ValidationError);
     }
 }

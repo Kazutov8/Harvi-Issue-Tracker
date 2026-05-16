@@ -13,4 +13,7 @@ export const issuesApi = {
   listLabels(projectSlug, accessToken) {
     return apiClient.get(`/projects/${projectSlug}/labels`, { accessToken })
   },
+  suggestTriage(issueId, accessToken) {
+    return apiClient.post(`/issues/${issueId}/ai-suggest`, undefined, { accessToken })
+  },
 }
