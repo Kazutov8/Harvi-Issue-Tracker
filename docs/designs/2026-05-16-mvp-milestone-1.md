@@ -148,12 +148,15 @@ Expected result:
 
 - AI suggests values; it does not apply them automatically.
 - AI may only suggest labels that already exist in the project.
+- If the project has no labels, AI must return an empty `labels` array.
+- Placeholder values such as `none`, `null`, and `n/a` are not valid labels unless they actually exist in the project's label set.
 - If the model returns invalid labels, they must be rejected during validation.
 - If the model returns invalid priority, the response must not be trusted as-is.
 - Acceptance criteria is a draft for user review, not a source of truth.
 - For MVP, the triage integration uses an OpenAI-compatible chat completions API.
 - Local development targets LM Studio by default.
 - Provider endpoint and model must be supplied via configuration rather than hardcoded in application logic.
+- The prompt sent to the model must explicitly instruct it to use only existing project labels and to return `[]` when no labels are available.
 
 ### Auth rules
 
@@ -180,6 +183,8 @@ If the model suggests labels outside the project's label set:
 - those labels must not be applied automatically;
 - the suggestion should be sanitized or rejected;
 - the API response should remain predictable and explicit.
+- if the project label set is empty, any non-empty AI label suggestion is invalid;
+- placeholder values are not valid labels unless a project actually contains such a label.
 
 ### AI returned weak or empty acceptance criteria
 

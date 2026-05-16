@@ -224,6 +224,8 @@ Implement the first working vertical slice of the AI issue tracker: auth, projec
 - [] Add request validation for auth, project, issue, and triage endpoints
 - [] Add consistent API error responses
 - [] Extend integration coverage for validation errors, consistent error responses, and critical end-to-end API paths
+- [] Refine the AI triage prompt so empty project label sets require `labels: []` and invented placeholder labels are explicitly disallowed
+- [] Add automated coverage for empty available-label scenarios and invented-label rejection in AI triage
 - [] Add a small set of reference issues for manual AI triage evaluation
 - [] Add demo seed data for local setup
 - [] Review naming and remove dead code introduced during implementation
