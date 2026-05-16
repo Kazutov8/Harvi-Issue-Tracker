@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Web;
 using IssueTracker.API.IntegrationTests.Auth;
 using IssueTracker.API.IntegrationTests.Projects;
 using IssueTracker.Application.Abstractions;
@@ -97,6 +98,100 @@ public sealed class IssueEndpointsTests
         Assert.Equal(2, body.Count);
         Assert.Equal("Second issue", body[0].Title);
         Assert.Equal("First issue", body[1].Title);
+    }
+
+    [Fact]
+    public async Task List_HidesDoneIssuesByDefault_AndReturnsThemWhenExplicitlyRequested()
+    {
+        await using var factory = new ApiTestFactory();
+        using var client = factory.CreateClient();
+
+        await RegisterAndAuthenticateAsync(client, "issue-done-filter@example.com");
+        var project = await CreateProjectAsync(client, "Done Filter Board");
+
+        var activeIssue = await CreateIssueAsync(client, project.Slug, "Visible backlog issue", null);
+        var doneIssue = await CreateIssueAsync(client, project.Slug, "Completed issue", null);
+
+        await client.PostAsJsonAsync($"/issues/{doneIssue.Id}/transition", new TransitionIssueStatusRequest("done"));
+
+        var defaultResponse = await client.GetAsync($"/projects/{project.Slug}/issues");
+        var defaultBody = await defaultResponse.Content.ReadFromJsonAsync<List<IssueResponse>>();
+
+        Assert.Equal(HttpStatusCode.OK, defaultResponse.StatusCode);
+        Assert.NotNull(defaultBody);
+        Assert.Single(defaultBody);
+        Assert.Equal(activeIssue.Id, defaultBody[0].Id);
+
+        var includeDoneResponse = await client.GetAsync($"/projects/{project.Slug}/issues?includeDone=true");
+        var includeDoneBody = await includeDoneResponse.Content.ReadFromJsonAsync<List<IssueResponse>>();
+
+        Assert.Equal(HttpStatusCode.OK, includeDoneResponse.StatusCode);
+        Assert.NotNull(includeDoneBody);
+        Assert.Equal(2, includeDoneBody.Count);
+
+        var doneOnlyResponse = await client.GetAsync($"/projects/{project.Slug}/issues?status=done");
+        var doneOnlyBody = await doneOnlyResponse.Content.ReadFromJsonAsync<List<IssueResponse>>();
+
+        Assert.Equal(HttpStatusCode.OK, doneOnlyResponse.StatusCode);
+        Assert.NotNull(doneOnlyBody);
+        Assert.Single(doneOnlyBody);
+        Assert.Equal(doneIssue.Id, doneOnlyBody[0].Id);
+    }
+
+    [Fact]
+    public async Task List_FiltersByAssigneeLabelStatusAndTextQuery()
+    {
+        Guid bugLabelId = Guid.Empty;
+        Guid frontendLabelId = Guid.Empty;
+
+        await using var factory = new ApiTestFactory();
+        using var client = factory.CreateClient();
+
+        var auth = await RegisterAndAuthenticateAsync(client, "issue-combined-filter@example.com");
+        var project = await CreateProjectAsync(client, "Combined Filters Board");
+        var assignee = await RegisterUserAsync(client, "filter-worker@example.com", "Filter Worker");
+
+        await using (var scope = factory.Services.CreateAsyncScope())
+        {
+            var dbContext = scope.ServiceProvider.GetRequiredService<IssueTrackerDbContext>();
+            var bugLabel = Label.Create(project.Id, "bug");
+            var frontendLabel = Label.Create(project.Id, "frontend");
+            bugLabelId = bugLabel.Id;
+            frontendLabelId = frontendLabel.Id;
+            dbContext.Labels.AddRange(bugLabel, frontendLabel);
+            await dbContext.SaveChangesAsync();
+        }
+
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", auth.AccessToken);
+
+        var matchingIssue = await CreateIssueAsync(client, project.Slug, "Search login regression", "Frontend login screen crashes.");
+        var otherIssue = await CreateIssueAsync(client, project.Slug, "Background sync task", "Back office import issue.");
+
+        await client.PostAsJsonAsync(
+            $"/issues/{matchingIssue.Id}/apply-triage-suggestion",
+            new ApplyIssueTriageRequest("high", [bugLabelId, frontendLabelId], "Fix login page."));
+        await client.PostAsJsonAsync($"/issues/{matchingIssue.Id}/assign", new AssignIssueRequest(assignee.Id));
+        await client.PostAsJsonAsync($"/issues/{matchingIssue.Id}/transition", new TransitionIssueStatusRequest("todo"));
+
+        await client.PostAsJsonAsync(
+            $"/issues/{otherIssue.Id}/apply-triage-suggestion",
+            new ApplyIssueTriageRequest("medium", [bugLabelId], "Review background job."));
+
+        var query = HttpUtility.ParseQueryString(string.Empty);
+        query["status"] = "todo";
+        query["assigneeUserId"] = assignee.Id.ToString();
+        query["query"] = "login";
+        query.Add("labelIds", frontendLabelId.ToString());
+
+        var response = await client.GetAsync($"/projects/{project.Slug}/issues?{query}");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var body = await response.Content.ReadFromJsonAsync<List<IssueResponse>>();
+
+        Assert.NotNull(body);
+        Assert.Single(body);
+        Assert.Equal(matchingIssue.Id, body[0].Id);
     }
 
     [Fact]
@@ -314,6 +409,32 @@ public sealed class IssueEndpointsTests
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", auth.AccessToken);
 
         return auth;
+    }
+
+    private static async Task<UserResponse> RegisterUserAsync(HttpClient client, string email, string displayName)
+    {
+        var registerResponse = await client.PostAsJsonAsync(
+            "/auth/register",
+            new RegisterRequest(email, "Password123!", displayName));
+
+        var auth = await registerResponse.Content.ReadFromJsonAsync<AuthResponse>();
+
+        Assert.NotNull(auth);
+
+        return auth.User;
+    }
+
+    private static async Task<IssueResponse> CreateIssueAsync(HttpClient client, string projectSlug, string title, string? description)
+    {
+        var response = await client.PostAsJsonAsync(
+            $"/projects/{projectSlug}/issues",
+            new CreateIssueRequest(title, description));
+
+        var issue = await response.Content.ReadFromJsonAsync<IssueResponse>();
+
+        Assert.NotNull(issue);
+
+        return issue;
     }
 
     private static async Task<ProjectResponse> CreateProjectAsync(HttpClient client, string name)

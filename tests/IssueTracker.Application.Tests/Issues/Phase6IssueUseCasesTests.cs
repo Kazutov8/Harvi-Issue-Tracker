@@ -63,7 +63,10 @@ public sealed class Phase6IssueUseCasesTests
     {
         public Task AddAsync(Issue issue, CancellationToken cancellationToken = default) => Task.CompletedTask;
         public Task<Issue?> GetByIdAsync(Guid issueId, CancellationToken cancellationToken = default) => Task.FromResult<Issue?>(issue);
-        public Task<IReadOnlyList<Issue>> ListByProjectIdAsync(Guid projectId, CancellationToken cancellationToken = default) => Task.FromResult<IReadOnlyList<Issue>>([issue]);
+        public Task<IReadOnlyList<Issue>> ListByProjectIdAsync(
+            Guid projectId,
+            ProjectIssuesQuery query,
+            CancellationToken cancellationToken = default) => Task.FromResult<IReadOnlyList<Issue>>([issue]);
     }
 
     private sealed class StubLabelRepository(IReadOnlyList<Label> labels) : ILabelRepository

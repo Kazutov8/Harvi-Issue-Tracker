@@ -4,12 +4,17 @@ namespace IssueTracker.Application.Issues;
 
 public sealed class ListProjectIssues(IProjectRepository projectRepository, IIssueRepository issueRepository)
 {
-    public async Task<IReadOnlyList<IssueDto>> ExecuteAsync(string projectSlug, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<IssueDto>> ExecuteAsync(
+        string projectSlug,
+        ProjectIssuesQuery? query = null,
+        CancellationToken cancellationToken = default)
     {
         var project = await projectRepository.GetBySlugAsync(projectSlug, cancellationToken)
             ?? throw new InvalidOperationException("Project was not found.");
 
-        var issues = await issueRepository.ListByProjectIdAsync(project.Id, cancellationToken);
+        var effectiveQuery = query ?? ProjectIssuesQuery.Default;
+
+        var issues = await issueRepository.ListByProjectIdAsync(project.Id, effectiveQuery, cancellationToken);
         return issues.Select(IssueMappings.ToDto).ToList();
     }
 }

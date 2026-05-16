@@ -202,12 +202,12 @@ Implement the first working vertical slice of the AI issue tracker: auth, projec
 
 ## Phase 7 - Filters and search
 
-- [] Add issue list query model supporting status, assignee, labels, text query, page, and page size
-- [] Implement filtering and search persistence queries in `src/IssueTracker.Infrastructure/Persistence`
-- [] Hide `done` issues by default unless explicitly requested
-- [] Add filter query parameters to `GET /projects/{projectSlug}/issues`
-- [] Add frontend filter bar and issue search UI
-- [] Add integration tests for status, assignee, label, and text search filters including hidden-by-default `done` behavior
+ - [V] Add issue list query model supporting status, assignee, labels, text query, page, and page size
+ - [V] Implement filtering and search persistence queries in `src/IssueTracker.Infrastructure/Persistence`
+ - [V] Hide `done` issues by default unless explicitly requested
+ - [V] Add filter query parameters to `GET /projects/{projectSlug}/issues`
+ - [V] Add frontend filter bar and issue search UI
+ - [V] Add integration tests for status, assignee, label, and text search filters including hidden-by-default `done` behavior
 
 ### Files to touch
 
@@ -250,7 +250,7 @@ Implement the first working vertical slice of the AI issue tracker: auth, projec
 - [V] User can edit or accept the suggestion
 - [V] User can assign the issue
 - [V] User can move the issue to `todo`
-- [] User can find the issue again using list/search/filter UI
+- [V] User can find the issue again using list/search/filter UI
 
 ## Notes
 

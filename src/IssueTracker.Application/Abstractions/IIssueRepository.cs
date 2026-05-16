@@ -1,4 +1,5 @@
 using IssueTracker.Domain.Entities;
+using IssueTracker.Application.Issues;
 
 namespace IssueTracker.Application.Abstractions;
 
@@ -8,5 +9,8 @@ public interface IIssueRepository
 
     Task<Issue?> GetByIdAsync(Guid issueId, CancellationToken cancellationToken = default);
 
-    Task<IReadOnlyList<Issue>> ListByProjectIdAsync(Guid projectId, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<Issue>> ListByProjectIdAsync(
+        Guid projectId,
+        ProjectIssuesQuery query,
+        CancellationToken cancellationToken = default);
 }

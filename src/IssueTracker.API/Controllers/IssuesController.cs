@@ -51,11 +51,36 @@ public sealed class IssuesController(
     }
 
     [HttpGet("projects/{projectSlug}/issues")]
-    public async Task<ActionResult<IReadOnlyList<IssueResponse>>> List(string projectSlug, CancellationToken cancellationToken)
+    public async Task<ActionResult<IReadOnlyList<IssueResponse>>> List(
+        string projectSlug,
+        [FromQuery] string? status,
+        [FromQuery] Guid? assigneeUserId,
+        [FromQuery] Guid[]? labelIds,
+        [FromQuery] string? query,
+        [FromQuery] int page,
+        [FromQuery] int pageSize,
+        [FromQuery] bool includeDone,
+        CancellationToken cancellationToken)
     {
+        if (!TryParseStatus(status, out var parsedStatus))
+        {
+            return ValidationProblem("Status value is invalid.");
+        }
+
         try
         {
-            var issues = await listProjectIssues.ExecuteAsync(projectSlug, cancellationToken);
+            var issues = await listProjectIssues.ExecuteAsync(
+                projectSlug,
+                new ProjectIssuesQuery(
+                    parsedStatus,
+                    assigneeUserId,
+                    labelIds ?? [],
+                    query,
+                    page,
+                    pageSize,
+                    includeDone),
+                cancellationToken);
+
             return Ok(issues.Select(ToResponse).ToList());
         }
         catch (InvalidOperationException exception)
@@ -224,5 +249,27 @@ public sealed class IssuesController(
             IssueStatus.InReview => "in-review",
             _ => status.ToString().ToLowerInvariant(),
         };
+    }
+
+    private static bool TryParseStatus(string? status, out IssueStatus? parsedStatus)
+    {
+        parsedStatus = null;
+
+        if (string.IsNullOrWhiteSpace(status))
+        {
+            return true;
+        }
+
+        parsedStatus = status.Trim().ToLowerInvariant() switch
+        {
+            "backlog" => IssueStatus.Backlog,
+            "todo" => IssueStatus.Todo,
+            "in-progress" or "inprogress" => IssueStatus.InProgress,
+            "in-review" or "inreview" => IssueStatus.InReview,
+            "done" => IssueStatus.Done,
+            _ => null,
+        };
+
+        return parsedStatus is not null;
     }
 }
