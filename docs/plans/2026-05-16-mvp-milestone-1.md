@@ -154,8 +154,8 @@ Implement the first working vertical slice of the AI issue tracker: auth, projec
 - [] Add `ITriageAgent` abstraction in `src/IssueTracker.Application/Abstractions`
 - [] Add triage suggestion DTOs in `src/IssueTracker.Application/Issues` or dedicated triage folder
 - [] Implement `SuggestIssueTriage` use case with validation of AI output
-- [] Implement concrete LLM-backed triage agent in `src/IssueTracker.Infrastructure/AI`
-- [] Add AI-related configuration in API/Infrastructure settings
+- [] Implement concrete LLM-backed triage agent in `src/IssueTracker.Infrastructure/AI` using an OpenAI-compatible chat completions API
+- [] Add AI-related configuration in API/Infrastructure settings for local LM Studio integration (`BaseUrl`, `Model`, `Timeout`)
 - [] Add `POST /issues/{id}/ai-suggest` endpoint in `src/IssueTracker.API/Controllers`
 - [] Add AI suggestion contracts in `src/IssueTracker.API/Contracts/Issues`
 - [] Add frontend AI triage panel on issue details page

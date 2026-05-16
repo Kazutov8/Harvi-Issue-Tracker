@@ -151,6 +151,9 @@ Expected result:
 - If the model returns invalid labels, they must be rejected during validation.
 - If the model returns invalid priority, the response must not be trusted as-is.
 - Acceptance criteria is a draft for user review, not a source of truth.
+- For MVP, the triage integration uses an OpenAI-compatible chat completions API.
+- Local development targets LM Studio by default.
+- Provider endpoint and model must be supplied via configuration rather than hardcoded in application logic.
 
 ### Auth rules
 
