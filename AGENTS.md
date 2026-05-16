@@ -67,4 +67,3 @@ By default:
 - choose the solution that favors simplicity;
 - maintain transparency and observability;
 - make AI features controllable and verifiable;
-- keep the focus on the MVP issue tracker with two AI functions: **triage** and **PR review**.
