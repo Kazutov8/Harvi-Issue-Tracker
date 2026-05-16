@@ -58,6 +58,23 @@ Implement the first working vertical slice of the AI issue tracker: auth, projec
 - `frontend/src/pages/*`
 - `frontend/src/api/*`
 
+## Phase 2.1 - Auth test baseline
+
+- [] Create backend integration test project in `tests/IssueTracker.API.IntegrationTests`
+- [] Add API test host setup with isolated test database configuration
+- [] Add integration tests for `POST /auth/register`
+- [] Add integration tests for `POST /auth/login`
+- [] Add integration tests for `GET /auth/me`
+- [] Ensure test database is recreated or isolated for each test run
+- [] Add documented command or script convention for running backend tests locally
+
+### Files to touch
+
+- `tests/IssueTracker.API.IntegrationTests/*`
+- `IssueTracker.sln`
+- `src/IssueTracker.API/*`
+- `src/IssueTracker.Infrastructure/Persistence/*`
+
 ## Phase 3 - Projects vertical slice
 
 - [] Add `Project` entity in `src/IssueTracker.Domain/Entities`
@@ -67,6 +84,7 @@ Implement the first working vertical slice of the AI issue tracker: auth, projec
 - [] Add project endpoints in `src/IssueTracker.API/Controllers`
 - [] Add project contracts in `src/IssueTracker.API/Contracts/Projects`
 - [] Add projects list/create UI in `frontend/src/pages` and `frontend/src/projects`
+- [] Add integration tests for project creation and project listing
 
 ### Files to touch
 
@@ -78,6 +96,7 @@ Implement the first working vertical slice of the AI issue tracker: auth, projec
 - `src/IssueTracker.API/Contracts/Projects/*`
 - `frontend/src/projects/*`
 - `frontend/src/pages/*`
+- `tests/IssueTracker.API.IntegrationTests/*`
 
 ## Phase 4 - Labels and issue foundation
 
@@ -91,6 +110,8 @@ Implement the first working vertical slice of the AI issue tracker: auth, projec
 - [] Add issue endpoints in `src/IssueTracker.API/Controllers`
 - [] Add issue and label contracts in `src/IssueTracker.API/Contracts`
 - [] Add frontend issue creation form, issue list, and issue details page
+- [] Add domain or application tests for issue defaults and label normalization rules where pure logic can be tested without HTTP
+- [] Add integration tests for create issue, get issue details, and list project issues
 
 ### Files to touch
 
@@ -107,6 +128,8 @@ Implement the first working vertical slice of the AI issue tracker: auth, projec
 - `src/IssueTracker.API/Contracts/Labels/*`
 - `frontend/src/issues/*`
 - `frontend/src/pages/*`
+- `tests/IssueTracker.API.IntegrationTests/*`
+- `tests/*`
 
 ## Phase 5 - AI triage vertical slice
 
@@ -119,6 +142,8 @@ Implement the first working vertical slice of the AI issue tracker: auth, projec
 - [] Add AI suggestion contracts in `src/IssueTracker.API/Contracts/Issues`
 - [] Add frontend AI triage panel on issue details page
 - [] Add UI states for loading, success, invalid suggestion, and provider failure
+- [] Add application tests for AI suggestion validation and invalid label or priority handling
+- [] Add integration tests for successful AI triage suggestion and provider failure path
 
 ### Files to touch
 
@@ -130,6 +155,8 @@ Implement the first working vertical slice of the AI issue tracker: auth, projec
 - `src/IssueTracker.API/appsettings*.json`
 - `frontend/src/issues/*`
 - `frontend/src/pages/IssueDetailsPage.*`
+- `tests/IssueTracker.API.IntegrationTests/*`
+- `tests/*`
 
 ## Phase 6 - Apply triage, assign, and transition
 
@@ -141,6 +168,8 @@ Implement the first working vertical slice of the AI issue tracker: auth, projec
 - [] Add `POST /issues/{id}/assign` endpoint
 - [] Add `POST /issues/{id}/transition` endpoint
 - [] Add frontend controls for apply suggestion, manual edits, assignee selection, and status transition
+- [] Add application tests for triage application rules, assignee validation, and `closed_at` transitions
+- [] Add integration tests for apply triage suggestion, assign issue, and transition issue status
 
 ### Files to touch
 
@@ -150,6 +179,8 @@ Implement the first working vertical slice of the AI issue tracker: auth, projec
 - `src/IssueTracker.API/Contracts/Issues/*`
 - `frontend/src/issues/*`
 - `frontend/src/pages/IssueDetailsPage.*`
+- `tests/IssueTracker.API.IntegrationTests/*`
+- `tests/*`
 
 ## Phase 7 - Filters and search
 
@@ -158,6 +189,7 @@ Implement the first working vertical slice of the AI issue tracker: auth, projec
 - [] Hide `done` issues by default unless explicitly requested
 - [] Add filter query parameters to `GET /projects/{projectSlug}/issues`
 - [] Add frontend filter bar and issue search UI
+- [] Add integration tests for status, assignee, label, and text search filters including hidden-by-default `done` behavior
 
 ### Files to touch
 
@@ -167,12 +199,13 @@ Implement the first working vertical slice of the AI issue tracker: auth, projec
 - `src/IssueTracker.API/Contracts/Issues/*`
 - `frontend/src/issues/*`
 - `frontend/src/pages/ProjectIssuesPage.*`
+- `tests/IssueTracker.API.IntegrationTests/*`
 
 ## Phase 8 - Hardening and demo readiness
 
 - [] Add request validation for auth, project, issue, and triage endpoints
 - [] Add consistent API error responses
-- [] Add basic integration tests for auth, project creation, issue creation, and AI triage path
+- [] Extend integration coverage for validation errors, consistent error responses, and critical end-to-end API paths
 - [] Add a small set of reference issues for manual AI triage evaluation
 - [] Add demo seed data for local setup
 - [] Review naming and remove dead code introduced during implementation
@@ -205,3 +238,5 @@ Implement the first working vertical slice of the AI issue tracker: auth, projec
 - Update status in place using `[]` and `[V]` only.
 - Do not mark a task as `[V]` until the change is actually implemented and verified to a reasonable degree.
 - For MVP, SQLite is the default local database. Migrations are the source of truth; the `.db` file is a local runtime artifact and should not be relied on as shared project state.
+- Before marking any phase as completed, run all existing automated tests relevant to the solution and resolve failures.
+- Each new backend vertical slice should add or update automated tests when practical instead of deferring all coverage to the end.
