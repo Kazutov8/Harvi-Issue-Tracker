@@ -43,6 +43,8 @@ Implement the first working vertical slice of the AI issue tracker: auth, projec
 - [V] Add request/response contracts for register, login, and me in `src/IssueTracker.API/Contracts`
 - [V] Add frontend auth screens and auth state wiring in `frontend/src/auth` and `frontend/src/pages`
 - [V] Add API token attachment in `frontend/src/api`
+- [V] Add initial EF Core migration for auth schema
+- [V] Verify local SQLite database can be created and used for auth flow
 
 ### Files to touch
 
@@ -202,3 +204,4 @@ Implement the first working vertical slice of the AI issue tracker: auth, projec
 - Keep tasks atomic. If a task becomes broad, split it into smaller checklist items before implementation.
 - Update status in place using `[]` and `[V]` only.
 - Do not mark a task as `[V]` until the change is actually implemented and verified to a reasonable degree.
+- For MVP, SQLite is the default local database. Migrations are the source of truth; the `.db` file is a local runtime artifact and should not be relied on as shared project state.

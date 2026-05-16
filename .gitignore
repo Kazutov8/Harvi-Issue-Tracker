@@ -47,7 +47,6 @@ packages/
 *.db
 *.db-shm
 *.db-wal
-Migrations/
 
 # Node.js / npm / React
 node_modules/
