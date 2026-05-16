@@ -60,13 +60,13 @@ Implement the first working vertical slice of the AI issue tracker: auth, projec
 
 ## Phase 2.1 - Auth test baseline
 
-- [] Create backend integration test project in `tests/IssueTracker.API.IntegrationTests`
-- [] Add API test host setup with isolated test database configuration
-- [] Add integration tests for `POST /auth/register`
-- [] Add integration tests for `POST /auth/login`
-- [] Add integration tests for `GET /auth/me`
-- [] Ensure test database is recreated or isolated for each test run
-- [] Add documented command or script convention for running backend tests locally
+- [V] Create backend integration test project in `tests/IssueTracker.API.IntegrationTests`
+- [V] Add API test host setup with isolated test database configuration
+- [V] Add integration tests for `POST /auth/register`
+- [V] Add integration tests for `POST /auth/login`
+- [V] Add integration tests for `GET /auth/me`
+- [V] Ensure test database is recreated or isolated for each test run
+- [V] Add documented command or script convention for running backend tests locally
 
 ### Files to touch
 

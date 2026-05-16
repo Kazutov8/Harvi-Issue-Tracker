@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{827E0CD3-B72D-47B6-A68D-7590B98EB39B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{B27494BC-858B-4C59-8AA2-BAF7B9C4C2D9}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IssueTracker.Domain", "src\IssueTracker.Domain\IssueTracker.Domain.csproj", "{AB2B24A9-5930-46AE-B5A3-120883F0F80C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IssueTracker.Application", "src\IssueTracker.Application\IssueTracker.Application.csproj", "{A39D7CF3-03EA-4748-9EF0-59B65BD3F9FB}"
@@ -12,6 +14,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IssueTracker.Infrastructure", "src\IssueTracker.Infrastructure\IssueTracker.Infrastructure.csproj", "{372FE45F-19D7-4ECC-A682-7050B37D8294}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IssueTracker.API", "src\IssueTracker.API\IssueTracker.API.csproj", "{06AF89B5-B5B1-4517-98BD-B77CDBD59CE7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IssueTracker.API.IntegrationTests", "tests\IssueTracker.API.IntegrationTests\IssueTracker.API.IntegrationTests.csproj", "{8DF44F86-34C1-40DA-BB10-C7928CEB2E11}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -71,6 +75,18 @@ Global
 		{06AF89B5-B5B1-4517-98BD-B77CDBD59CE7}.Release|x64.Build.0 = Release|Any CPU
 		{06AF89B5-B5B1-4517-98BD-B77CDBD59CE7}.Release|x86.ActiveCfg = Release|Any CPU
 		{06AF89B5-B5B1-4517-98BD-B77CDBD59CE7}.Release|x86.Build.0 = Release|Any CPU
+		{8DF44F86-34C1-40DA-BB10-C7928CEB2E11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8DF44F86-34C1-40DA-BB10-C7928CEB2E11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8DF44F86-34C1-40DA-BB10-C7928CEB2E11}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8DF44F86-34C1-40DA-BB10-C7928CEB2E11}.Debug|x64.Build.0 = Debug|Any CPU
+		{8DF44F86-34C1-40DA-BB10-C7928CEB2E11}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8DF44F86-34C1-40DA-BB10-C7928CEB2E11}.Debug|x86.Build.0 = Debug|Any CPU
+		{8DF44F86-34C1-40DA-BB10-C7928CEB2E11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8DF44F86-34C1-40DA-BB10-C7928CEB2E11}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8DF44F86-34C1-40DA-BB10-C7928CEB2E11}.Release|x64.ActiveCfg = Release|Any CPU
+		{8DF44F86-34C1-40DA-BB10-C7928CEB2E11}.Release|x64.Build.0 = Release|Any CPU
+		{8DF44F86-34C1-40DA-BB10-C7928CEB2E11}.Release|x86.ActiveCfg = Release|Any CPU
+		{8DF44F86-34C1-40DA-BB10-C7928CEB2E11}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -80,5 +96,6 @@ Global
 		{A39D7CF3-03EA-4748-9EF0-59B65BD3F9FB} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{372FE45F-19D7-4ECC-A682-7050B37D8294} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{06AF89B5-B5B1-4517-98BD-B77CDBD59CE7} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
+		{8DF44F86-34C1-40DA-BB10-C7928CEB2E11} = {B27494BC-858B-4C59-8AA2-BAF7B9C4C2D9}
 	EndGlobalSection
 EndGlobal
