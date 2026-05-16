@@ -67,3 +67,6 @@ By default:
 - choose the solution that favors simplicity;
 - maintain transparency and observability;
 - make AI features controllable and verifiable;
+
+## SKILLS
+Learn all the skills from the folder: /skills 
