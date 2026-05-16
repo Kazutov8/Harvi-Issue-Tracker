@@ -1,21 +1,23 @@
-import { apiClient } from '../api/client'
-
-async function checkHealth() {
-  return apiClient.get('/health')
-}
+import { useAuth } from '../auth/AuthContext'
 
 function HomePage() {
+  const { logout, user } = useAuth()
+
   return (
     <main className="page-shell">
       <section className="hero-card">
         <span className="eyebrow">MVP milestone 1</span>
         <h1>AI Issue Tracker</h1>
         <p className="lead">
-          Frontend and backend skeletons are in place. The next phases will build auth,
-          projects, issues, and AI triage on top of this foundation.
+          Authentication is now wired end-to-end. You are signed in and ready for the next
+          vertical slices: projects, issues, and AI triage.
         </p>
-        <button type="button" className="secondary-button" onClick={checkHealth}>
-          Ping health endpoint
+        <div className="user-summary">
+          <strong>{user.displayName}</strong>
+          <span>{user.email}</span>
+        </div>
+        <button type="button" className="secondary-button" onClick={logout}>
+          Sign out
         </button>
       </section>
     </main>

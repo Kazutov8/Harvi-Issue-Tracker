@@ -1,24 +1,27 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:5098';
 
 async function request(path, options = {}) {
+  const headers = {
+    'Content-Type': 'application/json',
+    ...(options.accessToken ? { Authorization: `Bearer ${options.accessToken}` } : {}),
+    ...(options.headers ?? {}),
+  }
+
   const response = await fetch(`${API_BASE_URL}${path}`, {
-    headers: {
-      'Content-Type': 'application/json',
-      ...(options.headers ?? {}),
-    },
+    headers,
     ...options,
-  });
+  })
 
   if (!response.ok) {
-    const message = await response.text();
-    throw new Error(message || `Request failed with status ${response.status}`);
+    const message = await response.text()
+    throw new Error(message || `Request failed with status ${response.status}`)
   }
 
   if (response.status === 204) {
-    return null;
+    return null
   }
 
-  return response.json();
+  return response.json()
 }
 
 export const apiClient = {
@@ -29,4 +32,4 @@ export const apiClient = {
       method: 'POST',
       body: body === undefined ? undefined : JSON.stringify(body),
     }),
-};
+}

@@ -34,15 +34,15 @@ Implement the first working vertical slice of the AI issue tracker: auth, projec
 
 ## Phase 2 - Authentication vertical slice
 
-- [] Add `User` entity and related domain rules in `src/IssueTracker.Domain`
-- [] Add auth use cases in `src/IssueTracker.Application/Auth`
-- [] Add password hashing service in `src/IssueTracker.Infrastructure/Auth`
-- [] Add JWT issuing and validation in `src/IssueTracker.Infrastructure/Auth`
-- [] Add auth persistence mapping in `src/IssueTracker.Infrastructure/Persistence`
-- [] Add auth endpoints in `src/IssueTracker.API/Controllers`
-- [] Add request/response contracts for register, login, and me in `src/IssueTracker.API/Contracts`
-- [] Add frontend auth screens and auth state wiring in `frontend/src/auth` and `frontend/src/pages`
-- [] Add API token attachment in `frontend/src/api`
+- [V] Add `User` entity and related domain rules in `src/IssueTracker.Domain`
+- [V] Add auth use cases in `src/IssueTracker.Application/Auth`
+- [V] Add password hashing service in `src/IssueTracker.Infrastructure/Auth`
+- [V] Add JWT issuing and validation in `src/IssueTracker.Infrastructure/Auth`
+- [V] Add auth persistence mapping in `src/IssueTracker.Infrastructure/Persistence`
+- [V] Add auth endpoints in `src/IssueTracker.API/Controllers`
+- [V] Add request/response contracts for register, login, and me in `src/IssueTracker.API/Contracts`
+- [V] Add frontend auth screens and auth state wiring in `frontend/src/auth` and `frontend/src/pages`
+- [V] Add API token attachment in `frontend/src/api`
 
 ### Files to touch
 
@@ -186,7 +186,7 @@ Implement the first working vertical slice of the AI issue tracker: auth, projec
 
 ## End-to-end acceptance checklist
 
-- [] User can register and log in
+- [V] User can register and log in
 - [] User can create a project
 - [] User can create an issue with title only
 - [] New issue starts in `backlog` with `medium` priority and no assignee
