@@ -21,4 +21,36 @@ public sealed class IssueTests
         Assert.Empty(issue.Labels);
         Assert.Null(issue.ClosedAtUtc);
     }
+
+    [Fact]
+    public void ApplyTriage_UpdatesPriorityLabelsAndAcceptanceCriteria()
+    {
+        var projectId = Guid.NewGuid();
+        var issue = Issue.Create(projectId, "Need backlog item", null, Guid.NewGuid());
+        var bugLabel = Label.Create(projectId, "bug");
+
+        issue.ApplyTriage(IssuePriority.High, [bugLabel], "User can submit the fixed form.");
+
+        Assert.Equal(IssuePriority.High, issue.Priority);
+        Assert.Single(issue.Labels);
+        Assert.Equal(bugLabel.Id, issue.Labels.Single().Id);
+        Assert.Equal("User can submit the fixed form.", issue.AcceptanceCriteria);
+        Assert.True(issue.AcceptanceCriteriaIsAiGenerated);
+    }
+
+    [Fact]
+    public void TransitionTo_DoneSetsClosedAt_AndLeavingDoneClearsIt()
+    {
+        var issue = Issue.Create(Guid.NewGuid(), "Need backlog item", null, Guid.NewGuid());
+
+        issue.TransitionTo(IssueStatus.Done);
+
+        Assert.Equal(IssueStatus.Done, issue.Status);
+        Assert.NotNull(issue.ClosedAtUtc);
+
+        issue.TransitionTo(IssueStatus.Todo);
+
+        Assert.Equal(IssueStatus.Todo, issue.Status);
+        Assert.Null(issue.ClosedAtUtc);
+    }
 }

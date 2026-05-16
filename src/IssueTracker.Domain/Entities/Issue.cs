@@ -68,4 +68,45 @@ public sealed class Issue
             CreatedAtUtc = DateTime.UtcNow,
         };
     }
+
+    public void ApplyTriage(IssuePriority priority, IReadOnlyCollection<Label> labels, string? acceptanceCriteria)
+    {
+        if (labels.Any(label => label.ProjectId != ProjectId))
+        {
+            throw new InvalidOperationException("Issue labels must belong to the same project.");
+        }
+
+        Priority = priority;
+
+        _labels.Clear();
+        _labels.AddRange(labels.DistinctBy(label => label.Id));
+
+        AcceptanceCriteria = string.IsNullOrWhiteSpace(acceptanceCriteria)
+            ? null
+            : acceptanceCriteria.Trim();
+        AcceptanceCriteriaIsAiGenerated = AcceptanceCriteria is not null;
+    }
+
+    public void AssignTo(Guid? assigneeUserId)
+    {
+        if (assigneeUserId == Guid.Empty)
+        {
+            throw new ArgumentException("Assignee user id must not be empty.", nameof(assigneeUserId));
+        }
+
+        AssigneeUserId = assigneeUserId;
+    }
+
+    public void TransitionTo(IssueStatus status)
+    {
+        Status = status;
+
+        if (status == IssueStatus.Done)
+        {
+            ClosedAtUtc = DateTime.UtcNow;
+            return;
+        }
+
+        ClosedAtUtc = null;
+    }
 }

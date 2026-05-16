@@ -12,16 +12,20 @@ async function request(path, options = {}) {
     ...options,
   })
 
+  const responseText = response.status === 204 ? '' : await response.text()
+
   if (!response.ok) {
-    const message = await response.text()
-    throw new Error(message || `Request failed with status ${response.status}`)
+    const error = new Error(responseText || `Request failed with status ${response.status}`)
+    error.status = response.status
+    error.responseText = responseText
+    throw error
   }
 
   if (response.status === 204) {
     return null
   }
 
-  return response.json()
+  return responseText ? JSON.parse(responseText) : null
 }
 
 export const apiClient = {

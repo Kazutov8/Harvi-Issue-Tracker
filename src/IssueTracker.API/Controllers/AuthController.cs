@@ -8,7 +8,11 @@ namespace IssueTracker.API.Controllers;
 
 [ApiController]
 [Route("auth")]
-public sealed class AuthController(RegisterUser registerUser, LoginUser loginUser, GetCurrentUser getCurrentUser) : ControllerBase
+public sealed class AuthController(
+    RegisterUser registerUser,
+    LoginUser loginUser,
+    GetCurrentUser getCurrentUser,
+    ListUsers listUsers) : ControllerBase
 {
     [HttpPost("register")]
     public async Task<ActionResult<AuthResponse>> Register(RegisterRequest request, CancellationToken cancellationToken)
@@ -68,6 +72,17 @@ public sealed class AuthController(RegisterUser registerUser, LoginUser loginUse
         }
 
         return Ok(new UserResponse(user.Id, user.Email, user.DisplayName, user.CreatedAtUtc));
+    }
+
+    [Authorize]
+    [HttpGet("users")]
+    public async Task<ActionResult<IReadOnlyList<UserResponse>>> List(CancellationToken cancellationToken)
+    {
+        var users = await listUsers.ExecuteAsync(cancellationToken);
+
+        return Ok(users
+            .Select(user => new UserResponse(user.Id, user.Email, user.DisplayName, user.CreatedAtUtc))
+            .ToList());
     }
 
     private static AuthResponse ToResponse(AuthResult result)

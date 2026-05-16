@@ -20,4 +20,12 @@ public sealed class UserRepository(IssueTrackerDbContext dbContext) : IUserRepos
     {
         return dbContext.Users.FirstOrDefaultAsync(user => user.NormalizedEmail == normalizedEmail, cancellationToken);
     }
+
+    public async Task<IReadOnlyList<User>> ListAsync(CancellationToken cancellationToken = default)
+    {
+        return await dbContext.Users
+            .OrderBy(user => user.DisplayName)
+            .ThenBy(user => user.Email)
+            .ToListAsync(cancellationToken);
+    }
 }

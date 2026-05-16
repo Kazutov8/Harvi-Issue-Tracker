@@ -16,4 +16,16 @@ export const issuesApi = {
   suggestTriage(issueId, accessToken) {
     return apiClient.post(`/issues/${issueId}/ai-suggest`, undefined, { accessToken })
   },
+  applyTriage(issueId, payload, accessToken) {
+    return apiClient.post(`/issues/${issueId}/apply-triage-suggestion`, payload, { accessToken })
+  },
+  assign(issueId, assigneeUserId, accessToken) {
+    return apiClient.post(`/issues/${issueId}/assign`, { assigneeUserId }, { accessToken })
+  },
+  transition(issueId, status, accessToken) {
+    return apiClient.post(`/issues/${issueId}/transition`, { status }, { accessToken })
+  },
+  listUsers(accessToken) {
+    return apiClient.get('/auth/users', { accessToken })
+  },
 }

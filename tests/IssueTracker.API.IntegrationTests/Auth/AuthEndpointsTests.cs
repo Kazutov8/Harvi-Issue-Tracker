@@ -77,4 +77,30 @@ public sealed class AuthEndpointsTests
         Assert.Equal(registerRequest.Email, user.Email);
         Assert.Equal(registerRequest.DisplayName, user.DisplayName);
     }
+
+    [Fact]
+    public async Task ListUsers_ReturnsRegisteredUsers_ForAuthorizedRequest()
+    {
+        await using var factory = new ApiTestFactory();
+        using var client = factory.CreateClient();
+
+        var firstUser = await client.PostAsJsonAsync("/auth/register", new RegisterRequest("dave@example.com", "Password123!", "Dave"));
+        var auth = await firstUser.Content.ReadFromJsonAsync<AuthResponse>();
+        Assert.NotNull(auth);
+
+        await client.PostAsJsonAsync("/auth/register", new RegisterRequest("erin@example.com", "Password123!", "Erin"));
+
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", auth.AccessToken);
+
+        var response = await client.GetAsync("/auth/users");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var users = await response.Content.ReadFromJsonAsync<List<UserResponse>>();
+
+        Assert.NotNull(users);
+        Assert.True(users.Count >= 2);
+        Assert.Contains(users, user => user.Email == "dave@example.com");
+        Assert.Contains(users, user => user.Email == "erin@example.com");
+    }
 }

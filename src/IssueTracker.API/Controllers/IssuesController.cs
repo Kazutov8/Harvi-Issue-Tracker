@@ -3,6 +3,7 @@ using IssueTracker.API.Contracts.Issues;
 using IssueTracker.API.Contracts.Labels;
 using IssueTracker.Application.Issues;
 using IssueTracker.Application.Labels;
+using IssueTracker.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,7 +16,10 @@ public sealed class IssuesController(
     GetIssueDetails getIssueDetails,
     ListProjectIssues listProjectIssues,
     ListProjectLabels listProjectLabels,
-    SuggestIssueTriage suggestIssueTriage) : ControllerBase
+    SuggestIssueTriage suggestIssueTriage,
+    ApplyIssueTriage applyIssueTriage,
+    AssignIssue assignIssue,
+    TransitionIssueStatus transitionIssueStatus) : ControllerBase
 {
     [HttpPost("projects/{projectSlug}/issues")]
     public async Task<ActionResult<IssueResponse>> Create(
@@ -111,6 +115,78 @@ public sealed class IssuesController(
         }
     }
 
+    [HttpPost("issues/{id:guid}/apply-triage-suggestion")]
+    public async Task<ActionResult<IssueResponse>> ApplyTriage(
+        Guid id,
+        ApplyIssueTriageRequest request,
+        CancellationToken cancellationToken)
+    {
+        if (!Enum.TryParse<IssuePriority>(request.Priority, true, out var priority))
+        {
+            return ValidationProblem("Priority value is invalid.");
+        }
+
+        try
+        {
+            var issue = await applyIssueTriage.ExecuteAsync(
+                id,
+                priority,
+                request.LabelIds,
+                request.AcceptanceCriteria,
+                cancellationToken);
+
+            return Ok(ToResponse(issue));
+        }
+        catch (InvalidOperationException exception)
+        {
+            return NotFound(new { message = exception.Message });
+        }
+    }
+
+    [HttpPost("issues/{id:guid}/assign")]
+    public async Task<ActionResult<IssueResponse>> Assign(
+        Guid id,
+        AssignIssueRequest request,
+        CancellationToken cancellationToken)
+    {
+        if (request.AssigneeUserId == Guid.Empty)
+        {
+            return ValidationProblem("Assignee user id is required.");
+        }
+
+        try
+        {
+            var issue = await assignIssue.ExecuteAsync(id, request.AssigneeUserId, cancellationToken);
+            return Ok(ToResponse(issue));
+        }
+        catch (InvalidOperationException exception)
+        {
+            return NotFound(new { message = exception.Message });
+        }
+    }
+
+    [HttpPost("issues/{id:guid}/transition")]
+    public async Task<ActionResult<IssueResponse>> Transition(
+        Guid id,
+        TransitionIssueStatusRequest request,
+        CancellationToken cancellationToken)
+    {
+        if (!Enum.TryParse<IssueStatus>(request.Status, true, out var status))
+        {
+            return ValidationProblem("Status value is invalid.");
+        }
+
+        try
+        {
+            var issue = await transitionIssueStatus.ExecuteAsync(id, status, cancellationToken);
+            return Ok(ToResponse(issue));
+        }
+        catch (InvalidOperationException exception)
+        {
+            return NotFound(new { message = exception.Message });
+        }
+    }
+
     private static IssueResponse ToResponse(IssueDto issue)
     {
         return new IssueResponse(
@@ -118,7 +194,7 @@ public sealed class IssuesController(
             issue.ProjectId,
             issue.Title,
             issue.Description,
-            issue.Status.ToString().ToLowerInvariant(),
+            ToStatusResponse(issue.Status),
             issue.Priority.ToString().ToLowerInvariant(),
             issue.ReporterUserId,
             issue.AssigneeUserId,
@@ -138,5 +214,15 @@ public sealed class IssuesController(
             suggestion.AcceptanceCriteria,
             suggestion.IsValid,
             suggestion.ValidationError);
+    }
+
+    private static string ToStatusResponse(IssueStatus status)
+    {
+        return status switch
+        {
+            IssueStatus.InProgress => "in-progress",
+            IssueStatus.InReview => "in-review",
+            _ => status.ToString().ToLowerInvariant(),
+        };
     }
 }

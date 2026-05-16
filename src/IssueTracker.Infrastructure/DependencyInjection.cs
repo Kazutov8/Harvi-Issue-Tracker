@@ -72,6 +72,10 @@ public static class DependencyInjection
         services.AddScoped<RegisterUser>();
         services.AddScoped<LoginUser>();
         services.AddScoped<GetCurrentUser>();
+        services.AddScoped<ListUsers>();
+        services.AddScoped<ApplyIssueTriage>();
+        services.AddScoped<AssignIssue>();
+        services.AddScoped<TransitionIssueStatus>();
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>

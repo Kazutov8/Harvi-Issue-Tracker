@@ -178,16 +178,16 @@ Implement the first working vertical slice of the AI issue tracker: auth, projec
 
 ## Phase 6 - Apply triage, assign, and transition
 
-- [] Add `ApplyIssueTriage` use case in `src/IssueTracker.Application/Issues`
-- [] Add `AssignIssue` use case in `src/IssueTracker.Application/Issues`
-- [] Add `TransitionIssueStatus` use case with `closed_at` logic in `src/IssueTracker.Application/Issues`
-- [] Add validation that assignee exists and status values are valid
-- [] Add `POST /issues/{id}/apply-triage-suggestion` endpoint
-- [] Add `POST /issues/{id}/assign` endpoint
-- [] Add `POST /issues/{id}/transition` endpoint
-- [] Add frontend controls for apply suggestion, manual edits, assignee selection, and status transition
-- [] Add application tests for triage application rules, assignee validation, and `closed_at` transitions
-- [] Add integration tests for apply triage suggestion, assign issue, and transition issue status
+- [V] Add `ApplyIssueTriage` use case in `src/IssueTracker.Application/Issues`
+- [V] Add `AssignIssue` use case in `src/IssueTracker.Application/Issues`
+- [V] Add `TransitionIssueStatus` use case with `closed_at` logic in `src/IssueTracker.Application/Issues`
+- [V] Add validation that assignee exists and status values are valid
+- [V] Add `POST /issues/{id}/apply-triage-suggestion` endpoint
+- [V] Add `POST /issues/{id}/assign` endpoint
+- [V] Add `POST /issues/{id}/transition` endpoint
+- [V] Add frontend controls for apply suggestion, manual edits, assignee selection, and status transition
+- [V] Add application tests for triage application rules, assignee validation, and `closed_at` transitions
+- [V] Add integration tests for apply triage suggestion, assign issue, and transition issue status
 
 ### Files to touch
 
@@ -245,9 +245,9 @@ Implement the first working vertical slice of the AI issue tracker: auth, projec
 - [V] New issue starts in `backlog` with `medium` priority and no assignee
 - [V] User can request AI triage for the issue
 - [V] User receives suggested priority, labels, and acceptance criteria
-- [] User can edit or accept the suggestion
-- [] User can assign the issue
-- [] User can move the issue to `todo`
+- [V] User can edit or accept the suggestion
+- [V] User can assign the issue
+- [V] User can move the issue to `todo`
 - [] User can find the issue again using list/search/filter UI
 
 ## Notes

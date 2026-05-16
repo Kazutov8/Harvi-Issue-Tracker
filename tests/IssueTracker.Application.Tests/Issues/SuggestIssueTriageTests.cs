@@ -52,6 +52,14 @@ public sealed class SuggestIssueTriageTests
         public Task<IReadOnlyList<Label>> ListByProjectIdAsync(Guid projectId, CancellationToken cancellationToken = default) => Task.FromResult(labels);
     }
 
+    private sealed class UnusedUserRepository : IUserRepository
+    {
+        public Task AddAsync(User user, CancellationToken cancellationToken = default) => Task.CompletedTask;
+        public Task<User?> GetByIdAsync(Guid userId, CancellationToken cancellationToken = default) => Task.FromResult<User?>(null);
+        public Task<User?> GetByNormalizedEmailAsync(string normalizedEmail, CancellationToken cancellationToken = default) => Task.FromResult<User?>(null);
+        public Task<IReadOnlyList<User>> ListAsync(CancellationToken cancellationToken = default) => Task.FromResult<IReadOnlyList<User>>([]);
+    }
+
     private sealed class StubTriageAgent(TriageAgentResponse response) : ITriageAgent
     {
         public Task<TriageAgentResponse> SuggestAsync(TriageAgentRequest request, CancellationToken cancellationToken = default) => Task.FromResult(response);
