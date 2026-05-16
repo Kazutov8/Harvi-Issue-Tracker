@@ -85,6 +85,7 @@ Implement the first working vertical slice of the AI issue tracker: auth, projec
 - [V] Add project contracts in `src/IssueTracker.API/Contracts/Projects`
 - [V] Add projects list/create UI in `frontend/src/pages` and `frontend/src/projects`
 - [V] Add integration tests for project creation and project listing
+- [V] Configure local frontend-to-backend dev integration via `https://localhost:7017` with explicit backend CORS allowance for the Vite origin
 
 ### Files to touch
 
@@ -97,6 +98,9 @@ Implement the first working vertical slice of the AI issue tracker: auth, projec
 - `frontend/src/projects/*`
 - `frontend/src/pages/*`
 - `tests/IssueTracker.API.IntegrationTests/*`
+- `frontend/src/api/client.js`
+- `frontend/.env.local`
+- `src/IssueTracker.API/Program.cs`
 
 ## Phase 4 - Labels and issue foundation
 
