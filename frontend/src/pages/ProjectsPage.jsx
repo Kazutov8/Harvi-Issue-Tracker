@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
 import { projectsApi } from '../projects/projectsApi'
 
@@ -118,7 +119,9 @@ function ProjectsPage() {
                 {projects.map((project) => (
                   <li key={project.id} className="project-card">
                     <div>
-                      <strong>{project.name}</strong>
+                      <Link to={`/projects/${project.slug}/issues`} className="issue-link">
+                        {project.name}
+                      </Link>
                       <p className="project-slug">/{project.slug}</p>
                     </div>
                   </li>

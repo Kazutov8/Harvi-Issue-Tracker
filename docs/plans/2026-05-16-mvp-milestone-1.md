@@ -104,18 +104,32 @@ Implement the first working vertical slice of the AI issue tracker: auth, projec
 
 ## Phase 4 - Labels and issue foundation
 
-- [] Add `Label` entity and normalized-name rule in `src/IssueTracker.Domain/Entities`
-- [] Add `Issue` entity, enums, and invariants in `src/IssueTracker.Domain`
-- [] Add issue and label repository abstractions in `src/IssueTracker.Application/Abstractions`
-- [] Add `CreateIssue`, `GetIssueDetails`, and `ListProjectIssues` use cases in `src/IssueTracker.Application/Issues`
-- [] Add label management support needed for project triage context in `src/IssueTracker.Application/Labels`
-- [] Add EF Core mappings for issues, labels, and join table in `src/IssueTracker.Infrastructure/Persistence`
-- [] Create migration for users, projects, labels, issues, and issue-labels
-- [] Add issue endpoints in `src/IssueTracker.API/Controllers`
-- [] Add issue and label contracts in `src/IssueTracker.API/Contracts`
-- [] Add frontend issue creation form, issue list, and issue details page
-- [] Add domain or application tests for issue defaults and label normalization rules where pure logic can be tested without HTTP
-- [] Add integration tests for create issue, get issue details, and list project issues
+- Execution order for current codebase:
+  1. Extend the domain model first: add `Label`, `Issue`, and issue status/priority enums while preserving the existing static-factory style used by `User` and `Project`.
+  2. Introduce application contracts and use cases next: repository abstractions, issue DTOs, and label-query support needed by the issue read/write flows.
+  3. Expand persistence in one pass: update `IssueTrackerDbContext`, add EF configurations and repositories, then create a migration that folds labels and issues into the existing SQLite schema.
+  4. Add the API slice after the application layer is stable: contracts and an `IssuesController` for create, details, and list-by-project.
+  5. Add the frontend vertical slice last: project issue list page, issue creation form, and issue details page wired to the current auth/token flow and router.
+  6. Cover the slice with tests in two layers: pure domain/application tests for invariants and integration tests for the new HTTP endpoints.
+
+- Scope notes for implementation:
+  - Do not build full label CRUD in this phase. Only add the minimum label support required so projects have an available label set for upcoming AI triage work.
+  - The current frontend has no project-details route yet, so Phase 4 should explicitly introduce navigation from the projects list into a per-project issues page rather than trying to overload `ProjectsPage`.
+  - `IApplicationDbContext` is intentionally minimal today. Unless a concrete use case truly needs direct set access, prefer repositories over widening that abstraction prematurely.
+  - The current API returns mostly simple controller-level validation responses. Keep Phase 4 consistent with that style instead of introducing a broader validation/error framework before Phase 8.
+
+- [V] Add `Label` entity and normalized-name rule in `src/IssueTracker.Domain/Entities`
+- [V] Add `Issue` entity, enums, and invariants in `src/IssueTracker.Domain`
+- [V] Add issue and label repository abstractions in `src/IssueTracker.Application/Abstractions`
+- [V] Add `CreateIssue`, `GetIssueDetails`, and `ListProjectIssues` use cases in `src/IssueTracker.Application/Issues`
+- [V] Add label management support needed for project triage context in `src/IssueTracker.Application/Labels`
+- [V] Add EF Core mappings for issues, labels, and join table in `src/IssueTracker.Infrastructure/Persistence`
+- [V] Create migration for users, projects, labels, issues, and issue-labels
+- [V] Add issue endpoints in `src/IssueTracker.API/Controllers`
+- [V] Add issue and label contracts in `src/IssueTracker.API/Contracts`
+- [V] Add frontend issue creation form, issue list, and issue details page
+- [V] Add domain or application tests for issue defaults and label normalization rules where pure logic can be tested without HTTP
+- [V] Add integration tests for create issue, get issue details, and list project issues
 
 ### Files to touch
 
@@ -227,8 +241,8 @@ Implement the first working vertical slice of the AI issue tracker: auth, projec
 
 - [V] User can register and log in
 - [V] User can create a project
-- [] User can create an issue with title only
-- [] New issue starts in `backlog` with `medium` priority and no assignee
+- [V] User can create an issue with title only
+- [V] New issue starts in `backlog` with `medium` priority and no assignee
 - [] User can request AI triage for the issue
 - [] User receives suggested priority, labels, and acceptance criteria
 - [] User can edit or accept the suggestion
